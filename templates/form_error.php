@@ -1,5 +1,3 @@
-<?php
-if (isset($error_msg)) {
-  echo '<p class="error">'.$error_msg.'</p>';
-}
-?>
+<?php if (isset($error_msg)) { ?>
+  <p class="error"><?php echo $error_msg ?></p>
+<?php } ?>

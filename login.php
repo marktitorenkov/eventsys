@@ -29,7 +29,7 @@ include 'templates/main_header.php'
   <input type="text" name="username" placeholder="Username" required>
   <input type="password" name="password" placeholder="Password" required>
   <button type="submit">Login</button>
-  <?php include 'templates/form_error.php'; ?>
+  <?php include 'templates/form_error.php' ?>
 </form>
 <a href="register.php">Register</a>
 

@@ -13,7 +13,7 @@ include 'templates/main_header.php'
 ?>
 
 <main>
-  <h1>Welcome, <?php echo $username; ?>!</h1>
+  <h1>Welcome, <?php echo $username ?>!</h1>
   <p><a href="logout.php">Logout</a></p>
 </main>
 

@@ -33,7 +33,7 @@ include 'templates/main_header.php'
   <input type="password" name="password" placeholder="Password" required>
   <input type="password" name="confirm_password" placeholder="Confirm Password" required>
   <button type="submit">Register</button>
-  <?php include 'templates/form_error.php'; ?>
+  <?php include 'templates/form_error.php' ?>
 </form>
 <a href="login.php">Login</a>
 
