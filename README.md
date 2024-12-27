@@ -1,1 +1,3 @@
-# fmi-www-project
+# eventsys
+
+FMI Web Course Project

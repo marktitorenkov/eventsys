@@ -1,0 +1,11 @@
+body {
+  font-family: sans-serif;
+}
+
+form {
+  margin: 2em 0;
+}
+
+p.error {
+  color: red;
+}
