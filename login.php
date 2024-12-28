@@ -26,7 +26,7 @@ include 'templates/main_header.php'
 
 <section class="box-container">
   <section class="content login">
-    <h2>Login</h2>
+    <h1>Login</h1>
     <form method="POST">
       <input type="text" name="username" placeholder="Username" required>
       <input type="password" name="password" placeholder="Password" required>
