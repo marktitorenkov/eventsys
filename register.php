@@ -9,11 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = $_POST['password'];
   $confirm_password = $_POST['confirm_password'];
 
-  if ($password != $confirm_password) {
-    $error_msg =  'Passwords do not match!';
+  if ($password !== $confirm_password) {
+    $error_msg = 'Passwords do not match!';
   }
   elseif (!registerUser($username, $password)) {
-    $error_msg =  'Username is already taken!';
+    $error_msg = 'Username is already taken!';
   }
   else {
     header('Location: login.php');
@@ -27,15 +27,19 @@ $page_title = "Register";
 include 'templates/main_header.php'
 ?>
 
-<h1>Register</h1>
-<form method="POST">
-  <input type="text" name="username" placeholder="Username" required>
-  <input type="password" name="password" placeholder="Password" required>
-  <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-  <button type="submit">Register</button>
-  <?php include 'templates/form_error.php' ?>
-</form>
-<a href="login.php">Login</a>
+<section class="box-container">
+  <section class="content login">
+    <h1>Register</h1>
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+      <button type="submit">Register</button>
+      <?php include 'templates/form_error.php' ?>
+    </form>
+    <a href="login.php">Login</a>
+  </section>
+</section>
 
 <?php
 include 'templates/main_footer.php'

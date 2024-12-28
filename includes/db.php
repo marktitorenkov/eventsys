@@ -53,8 +53,9 @@ function loginUser($username, $password) {
 }
 
 function getUserById($userId) {
-  $pdo = getPDO();
+  if ($userId === null) return null;
 
+  $pdo = getPDO();
   $stmt = $pdo->prepare('SELECT id, username FROM users WHERE id = ?');
   $stmt->execute([$userId]);
   return $stmt->fetch();
