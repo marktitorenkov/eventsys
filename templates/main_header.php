@@ -24,7 +24,7 @@ function active($param) {
           <span><h1>Events System</h1></span>
         </li>
       </ul>
-      <?php if ($user) { ?>
+      <?php if ($user): ?>
       <ul class="middle">
         <li>
           <a href="./" <?php active("index") ?>>Events</a>
@@ -37,13 +37,13 @@ function active($param) {
         <li>
           <a href="profile.php" <?php active("profile") ?>>
             <div class="profile">
-              <h3><?php echo $user['username'] ?></h3>
+              <strong><?php echo $user['username'] ?></strong>
               <img alt="Your Profile" src="<?php gravatarUrl($user['username']) ?>">
             </div>
           </a>
         </li>
       </ul>
-      <?php } ?>
+      <?php endif ?>
     </div>
   </nav>
   <main class="wrapper">

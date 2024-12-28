@@ -6,6 +6,7 @@
   --color-text: #000;
   --color-text-accent: #fff;
   --color-text-error: #f00;
+  --nav-height: 3.5em;
 }
 
 * {
@@ -13,12 +14,23 @@
 }
 
 body {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   font-family: sans-serif;
   color: var(--color-text);
   background-color: var(--color-background-body);
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
   margin: 0;
 }
 
@@ -34,23 +46,32 @@ form {
   margin: 2em 0;
 }
 
+form input,
+form button {
+  width: 100%;
+}
+
 input,
-button {
+button,
+a.btn {
   display: block;
+  font-size: inherit;
   border: 1px solid var(--color-accent);
   padding: 1em;
   margin: 1em 0;
-  width: 100%;
   border-radius: 0.5em;
+  text-decoration: none;
 }
 
-button {
+button,
+a.btn {
   cursor: pointer;
   color: var(--color-text-accent);
   background-color: var(--color-accent);
 }
 
-button:hover {
+button:hover,
+a.btn:hover {
   background-color: var(--color-accent-active);
 }
 
@@ -60,19 +81,20 @@ p.error {
 
 .wrapper {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1000px;
 }
 
 nav {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  top: 0;
+  left: 0;
   color: var(--color-text-accent);
   background-color: var(--color-accent);
 }
 
-nav h1,
-nav h2,
-nav h3 {
-  font-size: 1em;
+nav h1 {
   margin: 0;
   padding: 0;
 }
@@ -95,9 +117,6 @@ nav ul {
   display: flex;
   align-items: center;
   flex-direction: column;
-  list-style: none;
-  padding: 0;
-  margin: 0;
 }
 
 nav ul.middle {
@@ -106,7 +125,7 @@ nav ul.middle {
 }
 
 nav li {
-  height: 3.5em;
+  height: var(--nav-height);
   width: 100%;
 }
 
@@ -131,14 +150,19 @@ nav .profile img {
   border-radius: 50%;
 }
 
-.content {
-  margin: 1em;
-  padding: 2em;
-  background-color: var(--color-background);
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.content.login h2 {
-  font-size: 2em;
+.content {
+  padding: 2em;
+  background-color: var(--color-background);
+  margin: 1em;
+}
+
+.content.login h1 {
   text-align: center;
 }
 
@@ -149,8 +173,33 @@ nav .profile img {
   justify-content: center;
 }
 
+ul.date-list h2 {
+  margin-top: 2em;
+}
+
+ul.event-list li {
+  border: 1px solid var(--color-accent);
+  border-radius: 0.5em;
+  margin: 1em 0;
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
+}
+
 /* Large screens only */
 @media only screen and (min-width: 768px) {
+
+  body {
+    flex-direction: unset;
+  }
+
+  nav {
+    position: fixed;
+  }
+
+  nav h1 {
+    font-size: 1em;
+  }
 
   form input,
   form button {
@@ -172,6 +221,10 @@ nav .profile img {
 
   nav li {
     width: unset;
+  }
+
+  .content {
+    margin-top: calc(1em + var(--nav-height));
   }
 
 }

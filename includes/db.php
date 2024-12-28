@@ -61,4 +61,40 @@ function getUserById($userId) {
   return $stmt->fetch();
 }
 
+function getEvents() {
+  // TODO: read from DB
+  return [
+    [
+      'id' => 1,
+      'name' => 'D Birthday',
+      'date' => strtotime('2025-02-04'),
+      'recurring' => true,
+    ],
+    [
+      'id' => 2,
+      'name' => 'M Birthday',
+      'date' => strtotime('2025-05-05'),
+      'recurring' => true,
+    ],
+    [
+      'id' => 3,
+      'name' => 'O Birthday',
+      'date' => strtotime('2025-05-24'),
+      'recurring' => true,
+    ],
+    [
+      'id' => 4,
+      'name' => 'I Nameday',
+      'date' => strtotime('2025-05-05'),
+      'recurring' => true,
+    ],
+    [
+      'id' => 5,
+      'name' => 'X+Y Wedding',
+      'date' => strtotime('2025-08-15'),
+      'recurring' => false,
+    ],
+  ];
+}
+
 ?>
