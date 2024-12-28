@@ -24,14 +24,18 @@ $page_title = "Login";
 include 'templates/main_header.php'
 ?>
 
-<h1>Login</h1>
-<form method="POST">
-  <input type="text" name="username" placeholder="Username" required>
-  <input type="password" name="password" placeholder="Password" required>
-  <button type="submit">Login</button>
-  <?php include 'templates/form_error.php' ?>
-</form>
-<a href="register.php">Register</a>
+<section class="box-container">
+  <section class="content login">
+    <h2>Login</h2>
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+      <?php include 'templates/form_error.php' ?>
+    </form>
+    <a href="register.php">Register</a>
+  </section>
+</section>
 
 <?php
 include 'templates/main_footer.php'
