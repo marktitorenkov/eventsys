@@ -43,7 +43,7 @@ include 'templates/main_header.php'
 <section class="content">
   <header>
     <h1>Events</h1>
-    <a class="btn" href="event_create.php">Ceate Event</a>
+    <a class="btn" href="event_create.php">Create Event</a>
   </header>
   <?php
   if (isset($schedule)):
@@ -66,7 +66,7 @@ include 'templates/main_header.php'
         <?php foreach ($events as $event): ?>
           <li>
             <span><?php echo $event['name'] ?></span>
-            <a href="event_view.php?id=<?php echo $event['id'] ?>">View</a>
+            <a href="event_view.php?event_id=<?php echo $event['id'] ?>">View</a>
           </li>
         <?php endforeach ?>
         </ul>
