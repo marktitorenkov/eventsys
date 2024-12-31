@@ -97,4 +97,57 @@ function getEvents() {
   ];
 }
 
+function getEventById($eventId) {
+  if ($eventId === null) return null;
+
+  // TODO: read from DB; needs event table
+  return getEvents()[$eventId - 1];
+}
+
+function createGroup($creator_id, $group_name, $money_goal, $time, $place, $description, $password) {
+  $pdo = getPDO();
+
+  $meeting_time = date('G:i:s', strtotime($time));
+  $meeting_place = empty($place) ? null : $place;
+  $group_description = empty($description) ? null : $description;
+  $hashed_password = empty($password) ? null: password_hash($password, PASSWORD_BCRYPT);
+
+  // insert new group into table 'groups'
+  $stmt1 = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, hashed_password) VALUES (?, ?, ?, ?, ?, ?, ?)');
+  $stmt1->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $hashed_password]);
+
+  // get id of last inserted group by current user
+  $stmt2 = $pdo->prepare('SELECT MAX(group_id) FROM groups WHERE creator_id = ?;');
+  $stmt2->execute([$creator_id]);
+
+  return $stmt2->fetch()['MAX(group_id)'];
+}
+
+function attachGroupToEvent($group_id, $event_id) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('INSERT INTO event_to_group VALUES (?, ?)');
+  $stmt->execute([$event_id, $group_id]);
+
+  return $stmt->fetchAll();
+}
+
+function getGroupById($group_id) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('SELECT * FROM groups WHERE group_id = ?;');
+  $stmt->execute([$group_id]);
+
+  return $stmt->fetch();
+}
+
+function getGroupsByEventId($event_id) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('SELECT groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, hashed_password FROM event_to_group AS eg JOIN groups ON eg.group_id = groups.group_id WHERE event_id = ?');
+  $stmt->execute([$event_id]);
+
+  return $stmt->fetchAll();
+}
+
 ?>
