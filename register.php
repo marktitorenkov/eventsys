@@ -9,11 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = $_POST['password'];
   $confirm_password = $_POST['confirm_password'];
 
+  $error_messages = array();
+
   if ($password !== $confirm_password) {
-    $error_msg = 'Passwords do not match!';
+    $error_messages[] = 'Passwords do not match!';
   }
   elseif (!registerUser($username, $password)) {
-    $error_msg = 'Username is already taken!';
+    $error_messages[] = 'Username is already taken!';
   }
   else {
     header('Location: login.php');
