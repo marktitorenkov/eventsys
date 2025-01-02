@@ -58,7 +58,17 @@ function getUserById($userId) {
   $pdo = getPDO();
   $stmt = $pdo->prepare('SELECT id, username FROM users WHERE id = ?');
   $stmt->execute([$userId]);
-  return $stmt->fetch();
+
+  $user = $stmt->fetch();
+
+  // check if user is missing in db, but session cache still has a user_id set
+  if ($user === false) {
+    session_unset();
+    header('Location: /login.php');
+    exit;
+  }
+
+  return $user;
 }
 
 function getEvents() {
