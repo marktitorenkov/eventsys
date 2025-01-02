@@ -7,7 +7,7 @@ ensureLoggedIn();
 function generateSchedule($events, $startDate, $endDate) {
   $schedule = [];
   foreach ($events as $event) {
-    $eventDate = new DateTime("@".$event['date']);
+    $eventDate = new DateTime($event['date']);
 
     if ($eventDate >= $startDate && $eventDate <= $endDate) {
       $schedule[$eventDate->getTimestamp()][] = $event;
@@ -66,7 +66,7 @@ include 'templates/main_header.php'
         <?php foreach ($events as $event): ?>
           <li>
             <span><?php echo $event['name'] ?></span>
-            <a href="event_view.php?event_id=<?php echo $event['id'] ?>&year=<?php echo $year ?>">View</a>
+            <a href="event_view.php?event_id=<?php echo $event['event_id'] ?>&year=<?php echo $year ?>">View</a>
           </li>
         <?php endforeach ?>
         </ul>
