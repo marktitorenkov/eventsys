@@ -31,16 +31,11 @@ ul.group-list li div {
 }
 
 .content.create-group textarea {
-  display: flex;
-  justify-content: center;
   width: 80%;
   min-height: 100px;
   max-height: 150px;
-  border: 1px solid var(--color-accent);
-  border-radius: 0.5em;
   margin: 4px;
   resize: vertical;
-  font-size: 16px;
 }
 
 .form-checkbox-wrapper {

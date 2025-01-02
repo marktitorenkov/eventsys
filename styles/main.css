@@ -14,9 +14,6 @@
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
   font-family: sans-serif;
   color: var(--color-text);
   background-color: var(--color-background-body);
@@ -47,15 +44,18 @@ form {
 }
 
 form input,
-form button {
+form button,
+form textarea {
   width: 100%;
 }
 
 input,
 button,
+textarea,
 a.btn {
   display: block;
   font-size: inherit;
+  font-family: inherit;
   border: 1px solid var(--color-accent);
   padding: 1em;
   margin: 1em 0;
@@ -82,6 +82,7 @@ p.error {
 .wrapper {
   width: 100%;
   max-width: 1000px;
+  margin: 0 auto;
 }
 
 nav {
@@ -92,6 +93,7 @@ nav {
   left: 0;
   color: var(--color-text-accent);
   background-color: var(--color-accent);
+  z-index: 1;
 }
 
 nav h1 {
@@ -191,6 +193,7 @@ ul.event-list li {
 
   body {
     flex-direction: unset;
+    padding-top: var(--nav-height);
   }
 
   nav {
@@ -223,8 +226,9 @@ ul.event-list li {
     width: unset;
   }
 
-  .content {
-    margin-top: calc(1em + var(--nav-height));
+  .content.login {
+    margin-top: calc(50vh - var(--nav-height));
+    transform: translateY(-50%);
   }
 
 }

@@ -3,8 +3,6 @@ require_once 'includes/session.php';
 require_once 'includes/db.php';
 
 ensureLoggedIn();
-
-$user = getUserById(getUserId())
 ?>
 
 <?php
