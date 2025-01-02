@@ -58,7 +58,17 @@ function getUserById($userId) {
   $pdo = getPDO();
   $stmt = $pdo->prepare('SELECT id, username FROM users WHERE id = ?');
   $stmt->execute([$userId]);
-  return $stmt->fetch();
+
+  $user = $stmt->fetch();
+
+  // check if user is missing in db, but session cache still has a user_id set
+  if ($user === false) {
+    session_unset();
+    header('Location: /login.php');
+    exit;
+  }
+
+  return $user;
 }
 
 function getEvents() {
@@ -95,6 +105,71 @@ function getEvents() {
       'recurring' => false,
     ],
   ];
+}
+
+function getEventById($eventId) {
+  if ($eventId === null) return null;
+
+  // TODO: read from DB; needs event table
+  return getEvents()[$eventId - 1];
+}
+
+function generate_random_string($length = 8) {
+  $allowed_characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  $ch_length = strlen($allowed_characters);
+  $random_string = '';
+
+  for ($i = 0; $i < $length; $i++) {
+    $random_string .= $allowed_characters[random_int(0, $ch_length - 1)];
+  }
+
+  return $random_string;
+}
+
+function createGroup($creator_id, $group_name, $money_goal, $time, $place, $description, $is_private) {
+  $pdo = getPDO();
+
+  $meeting_time = date('G:i:s', strtotime($time));
+  $meeting_place = empty($place) ? null : $place;
+  $group_description = empty($description) ? null : $description;
+  $group_pass = $is_private ? generate_random_string() : null;
+
+  // insert new group into table 'groups'
+  $stmt1 = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass) VALUES (?, ?, ?, ?, ?, ?, ?)');
+  $stmt1->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass]);
+
+  // get id of last inserted group by current user
+  $stmt2 = $pdo->prepare('SELECT MAX(group_id) FROM groups WHERE creator_id = ?;');
+  $stmt2->execute([$creator_id]);
+
+  return $stmt2->fetch()['MAX(group_id)'];
+}
+
+function attachGroupToEvent($group_id, $event_id, $year) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('INSERT INTO event_to_group VALUES (?, ?, ?)');
+  $stmt->execute([$event_id, $group_id, $year]);
+
+  return $stmt->fetchAll();
+}
+
+function getGroupById($group_id) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('SELECT * FROM groups WHERE group_id = ?;');
+  $stmt->execute([$group_id]);
+
+  return $stmt->fetch();
+}
+
+function getGroupsByEventIdYear($event_id, $year) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('SELECT groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass FROM event_to_group AS eg JOIN groups ON eg.group_id = groups.group_id WHERE event_id = ? AND year = ?');
+  $stmt->execute([$event_id, $year]);
+
+  return $stmt->fetchAll();
 }
 
 ?>

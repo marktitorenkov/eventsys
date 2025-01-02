@@ -8,9 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $username = $_POST['username'];
   $password = $_POST['password'];
 
+  $error_messages = array();
+
   $userId = loginUser($username, $password);
   if (!$userId) {
-    $error_msg = 'Invalid username or password!';
+    $error_messages[] = 'Invalid username or password!';
   } else {
     $_SESSION['user_id'] = $userId;
     header('Location: login.php');
