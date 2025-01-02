@@ -12,9 +12,9 @@ $group = getGroupById($_GET['group_id']);
 ?>
 
 
-<link rel="stylesheet" href="styles/groups.css">
 <?php
 $page_title = "View Group";
+$page_styles = ["styles/groups.css"];
 include 'templates/main_header.php'
 ?>
 

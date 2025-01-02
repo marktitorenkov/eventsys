@@ -1,29 +1,33 @@
 <?php
+require_once "db.php";
 
 function startSession() {
   if (!isset($_SESSION)) session_start();
 }
 
 function getUserId() {
-  startSession();
-  if (isset($_SESSION['user_id'])) {
-    return $_SESSION['user_id'];
-  } else {
-    return null;
+  global $user;
+
+  if (!$user) {
+    startSession();
+    $user = getUserById($_SESSION['user_id'] ?? null);
+    if (!$user) {
+      return null;
+    }
   }
+
+  return $user["id"];
 }
 
 function ensureLoggedIn() {
-  startSession();
-  if (!isset($_SESSION['user_id'])) {
+  if (!getUserId()) {
     header('Location: ./login.php');
     exit;
   }
 }
 
 function ensureLoggedOut() {
-  startSession();
-  if (isset($_SESSION['user_id'])) {
+  if (getUserId()) {
     header('Location: ./');
     exit;
   }

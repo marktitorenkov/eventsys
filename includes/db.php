@@ -61,13 +61,6 @@ function getUserById($userId) {
 
   $user = $stmt->fetch();
 
-  // check if user is missing in db, but session cache still has a user_id set
-  if ($user === false) {
-    session_unset();
-    header('Location: /login.php');
-    exit;
-  }
-
   return $user;
 }
 

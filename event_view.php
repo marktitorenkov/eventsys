@@ -12,9 +12,9 @@ $groups = getGroupsByEventIdYear($event_id, $year);
 ?>
 
 
-<link rel="stylesheet" href="styles/groups.css">
 <?php
 $page_title = "View Event";
+$page_styles = ["styles/groups.css"];
 include 'templates/main_header.php'
 ?>
 

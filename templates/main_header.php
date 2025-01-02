@@ -1,6 +1,5 @@
 <?php
 require_once 'includes/gravatar.php';
-$user = getUserById(getUserId());
 
 function active($param) {
   $isActive = basename($_SERVER['SCRIPT_NAME'], ".php") === $param;
@@ -15,6 +14,11 @@ function active($param) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="<?php echo gravatarUrl('Events System') ?>">
   <link rel="stylesheet" href="styles/main.css">
+  <?php if (isset($page_styles)): ?>
+  <?php foreach ($page_styles as $style): ?>
+    <link rel="stylesheet" href="<?php echo $style?>">
+  <?php endforeach ?>
+  <?php endif ?>
   <title><?php echo $page_title." | Events System" ?></title>
 </head>
 <body>
@@ -25,7 +29,7 @@ function active($param) {
           <span><h1>Events System</h1></span>
         </li>
       </ul>
-      <?php if ($user): ?>
+      <?php if (isset($user) && $user): ?>
       <ul class="middle">
         <li>
           <a href="./" <?php active("index") ?>>Events</a>

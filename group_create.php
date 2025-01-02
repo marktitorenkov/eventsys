@@ -4,7 +4,6 @@ require_once 'includes/db.php';
 
 ensureLoggedIn();
 
-$user = getUserById($_SESSION['user_id']);
 $event_id = $_GET['event_id'];
 $year = $_GET['year'];
 $event = getEventById($event_id);
@@ -58,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 
-<link rel="stylesheet" href="styles/groups.css">
 <?php
 $page_title = "Create Group";
+$page_styles = ["styles/groups.css"];
 include 'templates/main_header.php'
 ?>
 
