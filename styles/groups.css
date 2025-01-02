@@ -42,3 +42,10 @@ ul.group-list li div {
   resize: vertical;
   font-size: 16px;
 }
+
+.form-checkbox-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  white-space: nowrap;
+}

@@ -15,7 +15,6 @@ function active($param) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="<?php echo gravatarUrl('Events System') ?>">
   <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="styles/groups.css">
   <title><?php echo $page_title." | Events System" ?></title>
 </head>
 <body>

@@ -66,7 +66,7 @@ include 'templates/main_header.php'
         <?php foreach ($events as $event): ?>
           <li>
             <span><?php echo $event['name'] ?></span>
-            <a href="event_view.php?event_id=<?php echo $event['id'] ?>">View</a>
+            <a href="event_view.php?event_id=<?php echo $event['id'] ?>&year=<?php echo $year ?>">View</a>
           </li>
         <?php endforeach ?>
         </ul>

@@ -114,17 +114,29 @@ function getEventById($eventId) {
   return getEvents()[$eventId - 1];
 }
 
-function createGroup($creator_id, $group_name, $money_goal, $time, $place, $description, $password) {
+function generate_random_string($length = 8) {
+  $allowed_characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  $ch_length = strlen($allowed_characters);
+  $random_string = '';
+
+  for ($i = 0; $i < $length; $i++) {
+    $random_string .= $allowed_characters[random_int(0, $ch_length - 1)];
+  }
+
+  return $random_string;
+}
+
+function createGroup($creator_id, $group_name, $money_goal, $time, $place, $description, $is_private) {
   $pdo = getPDO();
 
   $meeting_time = date('G:i:s', strtotime($time));
   $meeting_place = empty($place) ? null : $place;
   $group_description = empty($description) ? null : $description;
-  $hashed_password = empty($password) ? null: password_hash($password, PASSWORD_BCRYPT);
+  $group_pass = $is_private ? generate_random_string() : null;
 
   // insert new group into table 'groups'
-  $stmt1 = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, hashed_password) VALUES (?, ?, ?, ?, ?, ?, ?)');
-  $stmt1->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $hashed_password]);
+  $stmt1 = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass) VALUES (?, ?, ?, ?, ?, ?, ?)');
+  $stmt1->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass]);
 
   // get id of last inserted group by current user
   $stmt2 = $pdo->prepare('SELECT MAX(group_id) FROM groups WHERE creator_id = ?;');
@@ -133,11 +145,11 @@ function createGroup($creator_id, $group_name, $money_goal, $time, $place, $desc
   return $stmt2->fetch()['MAX(group_id)'];
 }
 
-function attachGroupToEvent($group_id, $event_id) {
+function attachGroupToEvent($group_id, $event_id, $year) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('INSERT INTO event_to_group VALUES (?, ?)');
-  $stmt->execute([$event_id, $group_id]);
+  $stmt = $pdo->prepare('INSERT INTO event_to_group VALUES (?, ?, ?)');
+  $stmt->execute([$event_id, $group_id, $year]);
 
   return $stmt->fetchAll();
 }
@@ -151,11 +163,11 @@ function getGroupById($group_id) {
   return $stmt->fetch();
 }
 
-function getGroupsByEventId($event_id) {
+function getGroupsByEventIdYear($event_id, $year) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('SELECT groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, hashed_password FROM event_to_group AS eg JOIN groups ON eg.group_id = groups.group_id WHERE event_id = ?');
-  $stmt->execute([$event_id]);
+  $stmt = $pdo->prepare('SELECT groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass FROM event_to_group AS eg JOIN groups ON eg.group_id = groups.group_id WHERE event_id = ? AND year = ?');
+  $stmt->execute([$event_id, $year]);
 
   return $stmt->fetchAll();
 }

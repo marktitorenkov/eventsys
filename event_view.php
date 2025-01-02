@@ -5,36 +5,39 @@ require_once 'includes/db.php';
 ensureLoggedIn();
 
 $event_id = $_GET['event_id'];
+$year = $_GET['year'];
 $event = getEventById($event_id);
-$groups = getGroupsByEventId($event_id);
+$correct_date = strtotime(date('d M ', $event['date']) . $year);
+$groups = getGroupsByEventIdYear($event_id, $year);
 ?>
 
 
+<link rel="stylesheet" href="styles/groups.css">
 <?php
 $page_title = "View Event";
 include 'templates/main_header.php'
 ?>
+
 
 <section class="content">
   <header>
     <div>
       <h1>View Event</h1>
     </div>
-    <a class="btn" href="group_create.php?event_id=<?php echo $event_id?>">Create Group</a>
+    <a class="btn" href="group_create.php?event_id=<?php echo $event_id?>&year=<?php echo $year ?>">Create Group</a>
   </header>
-    <h2><?php echo $event['name']; ?></h2>
+    <h2><?php echo $event['name']; ?> | <?php echo date('d F Y, l', $correct_date) ?></h2>
     <?php
     if (!empty($groups)):
     ?>
     <ul class="group-list">
       <?php
-      $prevYear = 0;
       foreach ($groups as $group):
       ?>
       <li>
         <div>
           <h3><?php echo $group['group_name'] ?></h3>
-          <p><a href="group_view.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group['group_id'] ?>">View</a></p>
+          <p><a href="group_view.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group['group_id'] ?>&year=<?php echo $year ?>">View</a></p>
         </div>
         <div>
           <p>Money goal: <?php echo $group['money_goal'] ?></p>
