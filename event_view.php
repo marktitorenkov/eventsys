@@ -7,7 +7,7 @@ ensureLoggedIn();
 $event_id = $_GET['event_id'];
 $year = $_GET['year'];
 $event = getEventById($event_id);
-$correct_date = strtotime(date('d M ', $event['date']) . $year);
+$correct_date = strtotime(date('d M ', strtotime($event['date'])) . $year);
 $groups = getGroupsByEventIdYear($event_id, $year);
 ?>
 

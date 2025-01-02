@@ -26,7 +26,8 @@ function registerUser($username, $password) {
   $pdo = getPDO();
   $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-  $stmt = $pdo->prepare('INSERT INTO users (username, password_hash) VALUES (?, ?)');
+  $stmt = $pdo->prepare('INSERT INTO users (username, password_hash)
+                         VALUES (?, ?)');
   try {
     $stmt->execute([$username, $hashed_password]);
     return true;
@@ -42,7 +43,9 @@ function registerUser($username, $password) {
 function loginUser($username, $password) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('SELECT id, password_hash FROM users WHERE username = ?');
+  $stmt = $pdo->prepare('SELECT id, password_hash
+                         FROM users
+                         WHERE username = ?');
   $stmt->execute([$username]);
   $user = $stmt->fetch();
 
@@ -56,7 +59,9 @@ function getUserById($userId) {
   if ($userId === null) return null;
 
   $pdo = getPDO();
-  $stmt = $pdo->prepare('SELECT id, username FROM users WHERE id = ?');
+  $stmt = $pdo->prepare('SELECT id, username
+                         FROM users
+                         WHERE id = ?');
   $stmt->execute([$userId]);
 
   $user = $stmt->fetch();
@@ -65,46 +70,25 @@ function getUserById($userId) {
 }
 
 function getEvents() {
-  // TODO: read from DB
-  return [
-    [
-      'id' => 1,
-      'name' => 'D Birthday',
-      'date' => strtotime('2025-02-04'),
-      'recurring' => true,
-    ],
-    [
-      'id' => 2,
-      'name' => 'M Birthday',
-      'date' => strtotime('2025-05-05'),
-      'recurring' => true,
-    ],
-    [
-      'id' => 3,
-      'name' => 'O Birthday',
-      'date' => strtotime('2025-05-24'),
-      'recurring' => true,
-    ],
-    [
-      'id' => 4,
-      'name' => 'I Nameday',
-      'date' => strtotime('2025-05-05'),
-      'recurring' => true,
-    ],
-    [
-      'id' => 5,
-      'name' => 'X+Y Wedding',
-      'date' => strtotime('2025-08-15'),
-      'recurring' => false,
-    ],
-  ];
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('SELECT *
+                         FROM events');
+  $stmt->execute();
+
+  return $stmt->fetchAll();
 }
 
 function getEventById($eventId) {
   if ($eventId === null) return null;
 
-  // TODO: read from DB; needs event table
-  return getEvents()[$eventId - 1];
+  $pdo = getPDO();
+  $stmt = $pdo->prepare('SELECT *
+                         FROM events
+                         WHERE event_id = ?');
+  $stmt->execute([$eventId]);
+
+  return $stmt->fetch();
 }
 
 function generate_random_string($length = 8) {
@@ -128,11 +112,14 @@ function createGroup($creator_id, $group_name, $money_goal, $time, $place, $desc
   $group_pass = $is_private ? generate_random_string() : null;
 
   // insert new group into table 'groups'
-  $stmt1 = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass) VALUES (?, ?, ?, ?, ?, ?, ?)');
+  $stmt1 = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass)
+                          VALUES (?, ?, ?, ?, ?, ?, ?)');
   $stmt1->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass]);
 
   // get id of last inserted group by current user
-  $stmt2 = $pdo->prepare('SELECT MAX(group_id) FROM groups WHERE creator_id = ?;');
+  $stmt2 = $pdo->prepare('SELECT MAX(group_id)
+                          FROM groups
+                          WHERE creator_id = ?');
   $stmt2->execute([$creator_id]);
 
   return $stmt2->fetch()['MAX(group_id)'];
@@ -141,7 +128,8 @@ function createGroup($creator_id, $group_name, $money_goal, $time, $place, $desc
 function attachGroupToEvent($group_id, $event_id, $year) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('INSERT INTO event_to_group VALUES (?, ?, ?)');
+  $stmt = $pdo->prepare('INSERT INTO event_to_group
+                         VALUES (?, ?, ?)');
   $stmt->execute([$event_id, $group_id, $year]);
 
   return $stmt->fetchAll();
@@ -150,7 +138,9 @@ function attachGroupToEvent($group_id, $event_id, $year) {
 function getGroupById($group_id) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('SELECT * FROM groups WHERE group_id = ?;');
+  $stmt = $pdo->prepare('SELECT *
+                         FROM groups
+                         WHERE group_id = ?');
   $stmt->execute([$group_id]);
 
   return $stmt->fetch();
@@ -159,7 +149,10 @@ function getGroupById($group_id) {
 function getGroupsByEventIdYear($event_id, $year) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('SELECT groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass FROM event_to_group AS eg JOIN groups ON eg.group_id = groups.group_id WHERE event_id = ? AND year = ?');
+  $stmt = $pdo->prepare('SELECT groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass
+                         FROM event_to_group AS eg
+                         JOIN groups ON eg.group_id = groups.group_id
+                         WHERE event_id = ? AND year = ?');
   $stmt->execute([$event_id, $year]);
 
   return $stmt->fetchAll();
