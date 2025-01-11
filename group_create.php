@@ -1,6 +1,7 @@
 <?php
 require_once 'includes/session.php';
-require_once 'includes/db.php';
+require_once 'includes/getters.php';
+require_once 'includes/groups.php';
 
 ensureLoggedIn();
 
@@ -48,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $group_id = $result;
 
       attachGroupToEvent($group_id, $event_id, $year);
+      addUserToGroup($user_id, $group_id);
 
       header('Location: group_view.php?event_id=' . $event_id . '&group_id=' . $group_id . '&year=' . $year);
       exit;
@@ -66,10 +68,12 @@ include 'templates/main_header.php'
 
 <!-- attaching to event will show up in next years -->
 <section class="content">
-  <a href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
+  <div class="two-items-apart">
+    <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
+  </div>
   <h1><?php echo $event['name']?> | <?php echo date('d F Y, l', $correct_date) ?></h1>
   <h2>Create Group</h2>
-  <section class="content create-group">
+  <section class="content group-center">
     <form id="form-create-group" method="POST">
       <input type="text" name="group-name" placeholder="<?php echo $user['username']?>'s group">
       <input type="time" name="meeting-time" value="09:00:00">
