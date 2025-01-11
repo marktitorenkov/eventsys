@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 11, 2025 at 01:32 PM
+-- Generation Time: Jan 11, 2025 at 08:56 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,6 +41,7 @@ INSERT INTO `event_to_group` (`event_id`, `group_id`, `year`) VALUES
 (1, 1, 2025),
 (1, 2, 2025),
 (1, 3, 2026),
+(1, 5, 2025),
 (2, 4, 2025);
 
 --
@@ -48,10 +49,11 @@ INSERT INTO `event_to_group` (`event_id`, `group_id`, `year`) VALUES
 --
 
 INSERT INTO `groups` (`group_id`, `creator_id`, `group_name`, `money_goal`, `meeting_time`, `meeting_place`, `group_description`, `group_pass`) VALUES
-(1, 2, 'public group', 0, '09:00:00', NULL, NULL, NULL),
+(1, 2, 'radoslavs group', 0, '09:00:00', 'MEETING PALCE TO MEET', NULL, NULL),
 (2, 2, 'private test', 0, '09:00:00', NULL, NULL, 'dCvtDaJW'),
 (3, 2, 'next years public group', 0, '09:00:00', NULL, NULL, NULL),
-(4, 2, 'some random thing', 0, '09:00:00', NULL, NULL, NULL);
+(4, 2, 'some random thing', 0, '09:00:00', NULL, NULL, NULL),
+(5, 4, 'other group', 0, '09:00:00', NULL, NULL, NULL);
 
 --
 -- Dumping data for table `users`
@@ -66,10 +68,8 @@ INSERT INTO `users` (`id`, `username`, `password_hash`) VALUES
 --
 
 INSERT INTO `user_in_group` (`user_id`, `group_id`) VALUES
-(2, 1),
-(2, 2),
-(2, 3),
-(2, 4);
+(2, 1);
+(2, 2);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
