@@ -72,7 +72,7 @@ function getUserById($userId) {
 function getEvents() {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('SELECT *
+  $stmt = $pdo->prepare(query: 'SELECT *
                          FROM events');
   $stmt->execute();
 
@@ -101,6 +101,23 @@ function generate_random_string($length = 8) {
   }
 
   return $random_string;
+}
+
+function createEvent($userId,$canChange,$name,$date,$description,$recurring){
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('INSERT INTO events ($userId,$canChange,$name,$date,$description,$recurring)
+                          VALUES(?,?,?,?,?,?)');
+  $stmt->execute([$userId, $canChange, $name,$date,$description,$recurring]);
+  
+  
+
+  $stmt2 = $pdo->prepare('SELECT MAX(event_id)
+                          FROM events
+                          WHERE admin = ?');
+  $stmt2->execute([$userId]);
+
+  return $stmt2->fetch()['MAX(event_id)'];
 }
 
 function createGroup($creator_id, $group_name, $money_goal, $time, $place, $description, $is_private) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2025 at 06:39 PM
+-- Generation Time: Jan 11, 2025 at 09:46 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,8 +31,11 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `events`;
 CREATE TABLE `events` (
   `event_id` int(11) NOT NULL,
+  `admin` int(11) NOT NULL,
+  `canChange` tinyint(1) DEFAULT 1,
   `name` varchar(50) NOT NULL,
   `date` date NOT NULL,
+  `description` varchar(100) NOT NULL,
   `recurring` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -77,8 +80,27 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password_hash` char(60) NOT NULL
+  `password_hash` char(60) NOT NULL,
+  `birthdate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Triggers `users`
+--
+DROP TRIGGER IF EXISTS `Birthday`;
+DELIMITER $$
+CREATE TRIGGER `Birthday` AFTER INSERT ON `users` FOR EACH ROW INSERT INTO `events` 
+(admin,events.canChange, name,date,recurring) VALUES (NEW.username, 0, CONCAT('Birthday: ', NEW.username), NEW.birthdate, 1)
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `BirthdayUpdate`;
+DELIMITER $$
+CREATE TRIGGER `BirthdayUpdate` AFTER UPDATE ON `users` FOR EACH ROW UPDATE events
+SET
+date = (SELECT birthdate FROM users)
+WHERE events.admin LIKE users.username AND events.date NOT LIKE users.birthdate AND events.name LIKE 'Birthday%'
+$$
+DELIMITER ;
 
 --
 -- Indexes for dumped tables
