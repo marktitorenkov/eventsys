@@ -56,16 +56,82 @@ function addUserToGroup($user_id, $group_id) {
   $pdo = getPDO();
 
   $stmt = $pdo->prepare('INSERT INTO user_in_group
-                  VALUES (?, ?)');
-  $stmt->execute([$user_id, $group_id]);
+                        VALUES (?, ?)');
+  try {
+    $stmt->execute([$user_id, $group_id]);
+    return true;
+  } catch(\PDOException $e) {
+    if ($e->getCode() === '23000') {
+      return true;
+    }
+
+    throw $e;
+  }
 }
 
 function removeUserFromGroup($user_id, $group_id) {
   $pdo = getPDO();
 
   $stmt = $pdo->prepare('DELETE FROM user_in_group
-                  WHERE user_id = ? AND group_id = ?');
+                        WHERE user_id = ? AND group_id = ?');
   $stmt->execute([$user_id, $group_id]);
 }
 
+function updateGroupName($group_id, $new_group_name) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('UPDATE groups
+                        SET group_name = ?
+                        WHERE group_id = ?');
+  $stmt->execute([$new_group_name, $group_id]);
+}
+
+function updateGroupMeetingTime($group_id, $new_meeting_time) {
+  $pdo = getPDO();
+
+  $mysql_time_format = date('G:i:s', strtotime($new_meeting_time));
+
+  $stmt = $pdo->prepare('UPDATE groups
+                        SET meeting_time = ?
+                        WHERE group_id = ?');
+  $stmt->execute([$mysql_time_format, $group_id]);
+}
+
+function updateGroupMeetingPlace($group_id, $new_meeting_place) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('UPDATE groups
+                        SET meeting_place = ?
+                        WHERE group_id = ?');
+  $stmt->execute([$new_meeting_place, $group_id]);
+}
+
+function updateGroupMoneyGoal($group_id, $new_money_goal) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('UPDATE groups
+                        SET money_goal = ?
+                        WHERE group_id = ?');
+  $stmt->execute([$new_money_goal, $group_id]);
+}
+
+function updateGroupDescription($group_id, $new_group_description) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('UPDATE groups
+                        SET group_description = ?
+                        WHERE group_id = ?');
+  $stmt->execute([$new_group_description, $group_id]);
+}
+
+function updateGroupPass($group_id, $is_private) {
+  $pdo = getPDO();
+
+  $group_pass = $is_private ? generateRandomString() : null;
+
+  $stmt = $pdo->prepare('UPDATE groups
+                        SET group_pass = ?
+                        WHERE group_id = ?');
+  $stmt->execute([$group_pass, $group_id]);
+}
 ?>

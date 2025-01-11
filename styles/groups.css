@@ -47,12 +47,24 @@ ul.group-list li {
   white-space: nowrap;
 }
 
-#btn-join-group {
-  background-color: rgb(0, 180, 0);
+form button,
+.btn {
+  text-align: center;
+  align-content: center;
+  vertical-align: middle;
 }
 
-#btn-leave-group {
-  background-color: rgb(180, 0, 0);
+.btn.group-join {
+  background-color: #0f0;
+}
+
+.btn.group-leave {
+  background-color: #f00;
+}
+
+.btn.group-clear {
+  max-width: 80px;
+  background-color: #f00;
 }
 
 #form-leave-group {

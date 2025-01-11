@@ -15,17 +15,24 @@ $group_pass = $group['group_pass'];
 $in_group = checkUserInGroup($user_id, $group_id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if ($in_group) { // leave group
-    removeUserFromGroup($user_id, $group_id);
-    $in_group = false;
-  } else { // join group
-    if ($group_pass === $_POST['group-pass']) {
+  if (isset($_POST['form-join'])) { // join group
+    if ($group_pass) { // if group is private
+      if ($group_pass === $_POST['group-pass']) { // user provided password is correct
+        addUserToGroup($user_id, $group_id);
+        $in_group = true;
+      } else { // user provided password is NOT correct
+        $error_messages = ['Group pass is incorrect. Please try again.'];
+        $in_group = false;
+      }
+    } else { // if group is public
       addUserToGroup($user_id, $group_id);
       $in_group = true;
-    } else {
-      $error_messages = ['Group pass is incorrect. Please try again.'];
-      $in_group = false;
     }
+  }
+
+  if (isset($_POST['form-leave'])) { // leave group
+    removeUserFromGroup($user_id, $group_id);
+    $in_group = false;
   }
 }
 ?>
@@ -40,11 +47,16 @@ include 'templates/main_header.php'
 <section class="content">
   <div class="two-items-apart">
     <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
-    <form id="form-leave-group" method="POST">
     <?php if ($in_group): ?>
-      <button type="submit" id="btn-leave-group">Leave Group</button>
+    <div>
+      <form id="form-leave-group" method="POST">
+        <button type="submit" name="form-leave" class="btn group-leave">Leave Group</button>
+      </form>
+      <?php if ($user_id === $group['creator_id']): ?>
+        <a class="btn" href="group_edit.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group_id ?>&year=<?php echo $year ?>">Edit Group</a>
+      <?php endif ?>
+    </div>
     <?php endif ?>
-    </form>
   </div>
   <header>
     <h1><?php echo $event['name'] ?></h1>
@@ -52,26 +64,20 @@ include 'templates/main_header.php'
   </header>
   <?php if ($in_group): ?>  <!-- User in group => can show content -->
     <header>
-      <h2>Content...</h2>
+      <h2>...Chat...</h2>
     </header>
   <?php else: ?>  <!-- User NOT in group => JOIN before show content-->
+  <section class="content group-center">
+    <form method="POST">
     <?php if ($group_pass): ?> <!-- Group is PRIVATE => need GROUP PASS -->
-      <section class="content group-center">
-        <form method="POST">
-          <h2>Group is private. You need its <span class="hover-pop-up" title="8 character long password. Ask group creator for it.">GROUP PASS</span> to join.</h2>
-          <input id="input-group-pass" type="text" maxlength="8" name="group-pass" placeholder="Group pass" required>
-          <button type="submit" id="btn-join-group">Join Group</button>
-          <?php include 'templates/form_error.php' ?>
-        </form>
-      </section>
-    <?php else: ?> <!-- Group is PUBLIC => can join freely -->
-      <section class="content group-center">
-        <form method="POST">
-          <h2>Join to see more!</h2>
-          <button type="submit" id="btn-join-group">Join Group</button>
-        </form>
-      </section>
-    <?php endif?>
+      <h2>Group is private. You need its <span class="hover-pop-up" title="8 character long password. Ask group creator for it.">GROUP PASS</span> to join.</h2>
+      <input id="input-group-pass" type="text" maxlength="8" name="group-pass" placeholder="Group pass" required>
+    <?php else: ?>
+      <h2>Join to see more!</h2>
+    <?php endif ?>
+      <button type="submit" name="form-join" class="btn group-join">Join Group</button>
+    </form>
+  </section>
   <?php endif ?>
 </section>
 

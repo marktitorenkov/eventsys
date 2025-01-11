@@ -64,7 +64,7 @@ CREATE TABLE `groups` (
   `meeting_time` time NOT NULL DEFAULT '09:00:00',
   `meeting_place` varchar(50) DEFAULT NULL,
   `group_description` varchar(250) DEFAULT NULL,
-  `group_pass` char(60) DEFAULT NULL
+  `group_pass` char(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
