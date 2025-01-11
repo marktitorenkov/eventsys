@@ -41,14 +41,15 @@ function attachGroupToEvent($group_id, $event_id, $year) {
   return $stmt->fetchAll();
 }
 
-function checkUserInGroup($user_id, $group_id) {
+function checkUserInGroup($user_id, $event_id, $group_id) {
   $pdo = getPDO();
-  
+
   $stmt = $pdo->prepare('SELECT *
-                        FROM user_in_group
-                        WHERE user_id = ? AND group_id = ?');
-  $stmt->execute([$user_id, $group_id]);
-  
+                        FROM user_in_group as ug
+                            JOIN event_to_group as eg ON ug.group_id = eg.group_id
+                        WHERE ug.user_id = ? AND eg.event_id = ? AND eg.group_id = ?');
+  $stmt->execute([$user_id, $event_id, $group_id]);
+
   return !!$stmt->fetch();
 }
 

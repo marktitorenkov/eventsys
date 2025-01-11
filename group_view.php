@@ -12,10 +12,11 @@ $event_id = $_GET['event_id'];
 $event = getEventById($event_id);
 $group = getGroupById($group_id);
 $group_pass = $group['group_pass'];
-$in_group = checkUserInGroup($user_id, $group_id);
+$in_group = checkUserInGroup($user_id, $event_id, $group_id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['form-join'])) { // join group
+
     if ($group_pass) { // if group is private
       if ($group_pass === $_POST['group-pass']) { // user provided password is correct
         addUserToGroup($user_id, $group_id);
@@ -76,6 +77,7 @@ include 'templates/main_header.php'
       <h2>Join to see more!</h2>
     <?php endif ?>
       <button type="submit" name="form-join" class="btn group-join">Join Group</button>
+      <?php include 'templates/form_error.php'?>
     </form>
   </section>
   <?php endif ?>

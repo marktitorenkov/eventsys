@@ -68,7 +68,7 @@ INSERT INTO `users` (`id`, `username`, `password_hash`) VALUES
 --
 
 INSERT INTO `user_in_group` (`user_id`, `group_id`) VALUES
-(2, 1);
+(2, 1),
 (2, 2);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;

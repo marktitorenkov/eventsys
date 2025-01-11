@@ -5,8 +5,13 @@ require_once 'includes/groups.php';
 
 ensureLoggedIn();
 
+$event_id = $_GET['event_id'];
 $group_id = $_GET['group_id'];
 $group = getGroupById($group_id);
+
+if (!checkUserInGroup($_SESSION['user_id'], $event_id, $group_id)) {
+  header('Location: group_view.php?event_id=' . $event_id . '&group_id=' . $group_id . '&year=' . $_GET['year']);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['update-group-pass'])) {
@@ -50,7 +55,7 @@ include 'templates/main_header.php'
 
 <section class="content">
   <header>
-    <a class="btn" href="group_view.php?event_id=<?php echo $_GET['event_id'] ?>&group_id=<?php echo $group_id ?>&year=<?php echo $_GET['year'] ?>">Go back</a>
+    <a class="btn" href="group_view.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group_id ?>&year=<?php echo $_GET['year'] ?>">Go back</a>
     <h1><?php echo $group['group_name'] ?></h1>
   </header>
   <section class="content group-center">
