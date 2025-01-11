@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2025 at 06:35 PM
+-- Generation Time: Jan 11, 2025 at 01:32 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,27 +39,37 @@ INSERT INTO `events` (`event_id`, `name`, `date`, `recurring`) VALUES
 
 INSERT INTO `event_to_group` (`event_id`, `group_id`, `year`) VALUES
 (1, 1, 2025),
-(1, 2, 2026),
-(1, 3, 2025),
-(1, 4, 2025);
+(1, 2, 2025),
+(1, 3, 2026),
+(2, 4, 2025);
 
 --
 -- Dumping data for table `groups`
 --
 
 INSERT INTO `groups` (`group_id`, `creator_id`, `group_name`, `money_goal`, `meeting_time`, `meeting_place`, `group_description`, `group_pass`) VALUES
-(1, 2, 'group 2025', 0, '09:00:00', NULL, NULL, NULL),
-(2, 2, 'group 2026', 0, '09:00:00', NULL, NULL, NULL),
-(3, 2, 'private test', 0, '09:00:00', NULL, NULL, 'faOFxVGt'),
-(4, 2, 'public test', 0, '09:00:00', NULL, NULL, NULL);
+(1, 2, 'public group', 0, '09:00:00', NULL, NULL, NULL),
+(2, 2, 'private test', 0, '09:00:00', NULL, NULL, 'dCvtDaJW'),
+(3, 2, 'next years public group', 0, '09:00:00', NULL, NULL, NULL),
+(4, 2, 'some random thing', 0, '09:00:00', NULL, NULL, NULL);
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `password_hash`) VALUES
-(2, 'radoslav', '$2y$10$h4S7dN6/e8Ze4xmnz.uWP.V2OtWcTSZTrw5esc8wg0mnQAjA/Kaz.'),
+(2, 'radoslav', '$2y$10$wDUBuVFZn/pMeWo7SaiV/OehsJc66NFdHEbgRpRMSqsjgUoBOYohW'),
 (4, 'mark', '$2y$10$EX82855JmY.wJNIIgvcemu/tLG6rSkfbV3wHiulNka8p.q7LuiGwC');
+
+--
+-- Dumping data for table `user_in_group`
+--
+
+INSERT INTO `user_in_group` (`user_id`, `group_id`) VALUES
+(2, 1),
+(2, 2),
+(2, 3),
+(2, 4);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
