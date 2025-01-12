@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 11, 2025 at 09:46 PM
+-- Generation Time: Jan 12, 2025 at 01:14 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -98,7 +98,7 @@ DELIMITER $$
 CREATE TRIGGER `BirthdayUpdate` AFTER UPDATE ON `users` FOR EACH ROW UPDATE events
 SET
 date = (SELECT birthdate FROM users)
-WHERE events.admin LIKE users.username AND events.date NOT LIKE users.birthdate AND events.name LIKE 'Birthday%'
+WHERE events.admin LIKE users.id AND events.date NOT LIKE users.birthdate AND events.name LIKE 'Birthday%'
 $$
 DELIMITER ;
 
