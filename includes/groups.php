@@ -23,7 +23,6 @@ function createGroup($creator_id, $group_name, $money_goal, $time, $place, $desc
   $group_description = empty($description) ? null : $description;
   $group_pass = $is_private ? generateRandomString() : null;
   
-  // insert new group into table 'groups'
   $stmt = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass)
                         VALUES (?, ?, ?, ?, ?, ?, ?)');
   $stmt->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass]);
@@ -37,8 +36,6 @@ function attachGroupToEvent($group_id, $event_id, $year) {
   $stmt = $pdo->prepare('INSERT INTO event_to_group
                         VALUES (?, ?, ?)');
   $stmt->execute([$event_id, $group_id, $year]);
-  
-  return $stmt->fetchAll();
 }
 
 function checkUserInGroup($user_id, $event_id, $group_id) {
@@ -62,7 +59,7 @@ function addUserToGroup($user_id, $group_id) {
     $stmt->execute([$user_id, $group_id]);
     return true;
   } catch(\PDOException $e) {
-    if ($e->getCode() === '23000') {
+    if ($e->getCode() == 23000) {
       return true;
     }
 
@@ -78,61 +75,32 @@ function removeUserFromGroup($user_id, $group_id) {
   $stmt->execute([$user_id, $group_id]);
 }
 
-function updateGroupName($group_id, $new_group_name) {
+
+function updateGroup($group_id, $group_name, $money_goal, $time, $place, $description, $group_pass, $is_private) {
   $pdo = getPDO();
 
+  $meeting_time = date('G:i:s', strtotime($time));
+  $meeting_place = empty($place) ? null : $place;
+  $group_description = empty($description) ? null : $description;
+  if (!$group_pass && $is_private) { // group is public and request to make pilate
+    $group_pass = generateRandomString();
+  } elseif ($group_pass && !$is_private) { // group is private and request to make public
+    $group_pass = null;
+  } // other 2 cases, we keep group_pass as is
+
+
   $stmt = $pdo->prepare('UPDATE groups
-                        SET group_name = ?
+                        SET group_name = ?, money_goal = ?, meeting_time = ?, meeting_place = ?, group_description = ?, group_pass = ?
                         WHERE group_id = ?');
-  $stmt->execute([$new_group_name, $group_id]);
+  $stmt->execute([$group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass, $group_id]);
 }
 
-function updateGroupMeetingTime($group_id, $new_meeting_time) {
+function deleteGroup($group_id, $user_id) {
   $pdo = getPDO();
 
-  $mysql_time_format = date('G:i:s', strtotime($new_meeting_time));
-
-  $stmt = $pdo->prepare('UPDATE groups
-                        SET meeting_time = ?
-                        WHERE group_id = ?');
-  $stmt->execute([$mysql_time_format, $group_id]);
+  $stmt = $pdo->prepare('DELETE FROM groups
+                        WHERE group_id = ? AND creator_id = ?');
+  $stmt->execute([$group_id, $user_id]);
 }
 
-function updateGroupMeetingPlace($group_id, $new_meeting_place) {
-  $pdo = getPDO();
-
-  $stmt = $pdo->prepare('UPDATE groups
-                        SET meeting_place = ?
-                        WHERE group_id = ?');
-  $stmt->execute([$new_meeting_place, $group_id]);
-}
-
-function updateGroupMoneyGoal($group_id, $new_money_goal) {
-  $pdo = getPDO();
-
-  $stmt = $pdo->prepare('UPDATE groups
-                        SET money_goal = ?
-                        WHERE group_id = ?');
-  $stmt->execute([$new_money_goal, $group_id]);
-}
-
-function updateGroupDescription($group_id, $new_group_description) {
-  $pdo = getPDO();
-
-  $stmt = $pdo->prepare('UPDATE groups
-                        SET group_description = ?
-                        WHERE group_id = ?');
-  $stmt->execute([$new_group_description, $group_id]);
-}
-
-function updateGroupPass($group_id, $is_private) {
-  $pdo = getPDO();
-
-  $group_pass = $is_private ? generateRandomString() : null;
-
-  $stmt = $pdo->prepare('UPDATE groups
-                        SET group_pass = ?
-                        WHERE group_id = ?');
-  $stmt->execute([$group_pass, $group_id]);
-}
 ?>

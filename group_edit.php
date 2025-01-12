@@ -14,35 +14,34 @@ if (!checkUserInGroup($_SESSION['user_id'], $event_id, $group_id)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (isset($_POST['update-group-pass'])) {
-    updateGroupPass($group_id, $_POST['is-private']);
-  }
-  elseif (isset($_POST['update-group-name'])) {
-    updateGroupName($group_id, $_POST['new-group-name']);
-  }
-  elseif (isset($_POST['update-meeting-time'])) {
-    updateGroupMeetingTime($group_id, $_POST['new-meeting-time']);
-  }
-  elseif (isset($_POST['update-meeting-place'])) {
-    updateGroupMeetingPlace($group_id, $_POST['new-meeting-place']);
-  }
-  elseif (isset($_POST['clear-meeting-place'])) {
-    updateGroupMeetingPlace($group_id, null);
-  }
-  elseif (isset($_POST['update-money-goal'])) {
-    updateGroupMoneyGoal($group_id, $_POST['new-money-goal']);
-  }
-  elseif (isset($_POST['clear-money-goal'])) {
-    updateGroupMoneyGoal($group_id, null);
-  }
-  elseif (isset($_POST['update-group-description'])) {
-    updateGroupDescription($group_id, $_POST['new-group-description']);
-  }
-  elseif (isset($_POST['clear-group-description'])) {
-    updateGroupDescription($group_id, null);
-  }
+  if (isset($_POST['update-group'])) {
+    $group_name = $_POST['group-name'];
+    $meeting_time = $_POST['meeting-time'];
+    $meeting_place = $_POST['meeting-place'];
+    $money_goal = $_POST['money-goal'];
+    $group_description = $_POST['group-description'];
+    $is_private = $_POST['is-private'];
 
-  header("Refresh:0");
+    updateGroup(
+      $group_id,
+      $group_name,
+      $money_goal,
+      $meeting_time,
+      $meeting_place,
+      $group_description,
+      $group['group_pass'],
+      $is_private
+    );
+
+    header('Refresh:0');
+  }
+  
+  if (isset($_POST['delete-group'])) {
+    deleteGroup($group_id, $_SESSION['user_id']);
+
+    header('Location: event_view.php?event_id=' . $event_id . '&year=' . $_GET['year']);
+    exit;
+  }
 }
 ?>
 
@@ -50,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php
 $page_title = 'Edit Group';
 $page_styles = ['styles/groups.css'];
+$page_scripts = ['javascript/group_edit.js'];
 include 'templates/main_header.php'
 ?>
 
@@ -60,46 +60,23 @@ include 'templates/main_header.php'
   </header>
   <section class="content group-center">
     <form method="POST">
-      <p>Current group pass: <?php echo $group['group_pass'] ?></p>
+      <label for="group-name">Group name:</label>
+      <input type="text" id="group-name" name="group-name" maxlength="50" value="<?php echo $group['group_name'] ?>">
+      <label for="meeting-time">Meeting time:</label>
+      <input type="time" id="meeting-time" name="meeting-time" value="<?php echo $group['meeting_time'] ?>">
+      <label for="meeting-place">Meeting place:</label>
+      <input type="text" id="meeting-place" name="meeting-place" maxlength="50" value="<?php echo $group['meeting_place'] ?>">
+      <label for="money-goal">Money goal:</label>
+      <input type="number" id="money-goal" name="money-goal" min="0" value="<?php echo $group['money_goal'] ?>">
+      <label for="group-description">Group description:</label>
+      <textarea type="text" id="group-description" name="group-description" maxlength="250"><?php echo $group['group_description'] ?></textarea>
+      <label>Group pass: <?php if ($group['group_pass']) echo $group['group_pass']; else echo 'Group is public.'; ?></label>
       <div class="form-checkbox-wrapper">
         <input type="checkbox" id="is-private" name="is-private" <?php if ($group['group_pass']) {echo 'checked';} ?>>
         <label for="is-private">make private</label>
       </div>
-      <div><button type="submit" name="update-group-pass">Edit</button></div>
-    </form>
-    <form method="POST">
-      <p>Current group name: <?php echo $group['group_name'] ?></p>
-      <input type="text" name="new-group-name" maxlength="50" placeholder="New group name" required>
-      <div><button type="submit" name="update-group-name">Edit</button></div>
-    </form>
-    <form method="POST">
-      <p>Current meeting time: <?php echo $group['meeting_time'] ?></p>
-      <input type="time" name="new-meeting-time" value="09:00:00" required>
-      <div><button type="submit" name="update-meeting-time">Edit</button></div>
-    </form>
-    <form method="POST">
-      <p>Current meeting place: <?php echo $group['meeting_place'] ?></p>
-      <input type="text" name="new-meeting-place" maxlength="50" placeholder="New meeting place" required>
-      <div class="two-items-apart">
-        <button type="submit" name="update-meeting-place">Edit</button>
-        <button class="btn group-clear" type="submit" name="clear-meeting-place" formnovalidate>Clear</button>
-      </div>
-    </form>
-    <form method="POST">
-      <p>Current money goal: <?php echo $group['money_goal'] ?></p>
-      <input type="number" name="new-money-goal" min="0" placeholder="New money goal" required>
-      <div class="two-items-apart">
-        <button type="submit" name="update-money-goal">Edit</button>
-        <button class="btn group-clear" type="submit" name="clear-money-goal" formnovalidate>Clear</button>
-      </div>
-    </form>
-    <form method="POST">
-      <p>Current description: <?php echo $group['group_description'] ?></p>
-      <textarea type="text" name="new-group-description" maxlength="250" placeholder="New description" required></textarea>
-      <div class="two-items-apart">
-        <button type="submit" name="update-group-description">Edit</button>
-        <button class="btn group-clear" type="submit" name="clear-group-description" formnovalidate>Clear</button>
-      </div>
+      <button type="submit" name="update-group">Edit</button>
+      <button type="submit" class="btn delete" id="btn-delete-group" name="delete-group">DELETE GROUP</button>
     </form>
   </section>
 </section>

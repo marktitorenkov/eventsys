@@ -47,26 +47,6 @@ ul.group-list li {
   white-space: nowrap;
 }
 
-form button,
-.btn {
-  text-align: center;
-  align-content: center;
-  vertical-align: middle;
-}
-
-.btn.group-join {
-  background-color: #0f0;
-}
-
-.btn.group-leave {
-  background-color: #f00;
-}
-
-.btn.group-clear {
-  max-width: 80px;
-  background-color: #f00;
-}
-
 #form-leave-group {
   margin: 0;
   padding: 0;
