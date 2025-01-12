@@ -103,19 +103,19 @@ function generate_random_string($length = 8) {
   return $random_string;
 }
 
-function createEvent($userId,$canChange,$name,$date,$description,$recurring){
+function createEvent($admin,$canChange,$name,$date,$description,$recurring){
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('INSERT INTO events ($userId,$canChange,$name,$date,$description,$recurring)
+  $stmt = $pdo->prepare('INSERT INTO events (admin,canChange,name,date,description,recurring)
                           VALUES(?,?,?,?,?,?)');
-  $stmt->execute([$userId, $canChange, $name,$date,$description,$recurring]);
+  $stmt->execute([$admin, $canChange, $name,$date,$description,$recurring]);
   
   
 
   $stmt2 = $pdo->prepare('SELECT MAX(event_id)
                           FROM events
                           WHERE admin = ?');
-  $stmt2->execute([$userId]);
+  $stmt2->execute([$admin]);
 
   return $stmt2->fetch()['MAX(event_id)'];
 }
