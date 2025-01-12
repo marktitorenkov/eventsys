@@ -15,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $meeting_time = $_POST['meeting-time'];
   $meeting_place = $_POST['meeting-place'];
   $money_goal = $_POST['money-goal'];
-  $group_description = $_POST['description'];
-  $is_private = $_POST['is-private'];
+  $group_description = $_POST['group-description'] ?? null;
+  $is_private = $_POST['is-private'] ?? false;
 
   $error_messages = array();
 
@@ -35,13 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   if (empty($error_messages)) {
+    $user_id = $_SESSION['user_id'];
+
     $result = createGroup(
-      $_SESSION['user_id'],
+      $user_id,
       $group_name,
       $money_goal,
       $meeting_time,
       $meeting_place,
-      $description,
+      $group_description,
       $is_private,
     );
 
@@ -79,7 +81,7 @@ include 'templates/main_header.php'
       <input type="time" name="meeting-time" value="09:00:00">
       <input type="text" name="meeting-place" placeholder="Place">
       <input type="number" min="0" name="money-goal" placeholder="Money goal: 0">
-      <textarea form="form-create-group" type="text" name="description" placeholder="Description"></textarea>
+      <textarea form="form-create-group" type="text" name="group-description" placeholder="Description"></textarea>
       <div class="form-checkbox-wrapper">
         <input type="checkbox" id="is-private" name="is-private">
         <label for="is-private">make private</label>

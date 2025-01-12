@@ -14,23 +14,34 @@ if (!checkUserInGroup($_SESSION['user_id'], $event_id, $group_id)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $group_name = $_POST['group-name'];
-  $meeting_time = $_POST['meeting-time'];
-  $meeting_place = $_POST['meeting-place'];
-  $money_goal = $_POST['money-goal'];
-  $group_description = $_POST['group-description'];
-  $is_private = $_POST['is-private'];
+  if (isset($_POST['update-group'])) {
+    $group_name = $_POST['group-name'];
+    $meeting_time = $_POST['meeting-time'];
+    $meeting_place = $_POST['meeting-place'];
+    $money_goal = $_POST['money-goal'];
+    $group_description = $_POST['group-description'];
+    $is_private = $_POST['is-private'];
 
-  updateGroup($group_id,
-  $group_name,
-  $money_goal,
-  $meeting_time,
-  $meeting_place,
-  $group_description,
-  $group['group_pass'],
-  $is_private);
+    updateGroup(
+      $group_id,
+      $group_name,
+      $money_goal,
+      $meeting_time,
+      $meeting_place,
+      $group_description,
+      $group['group_pass'],
+      $is_private
+    );
+
+    header('Refresh:0');
+  }
   
-  header("Refresh:0");
+  if (isset($_POST['delete-group'])) {
+    deleteGroup($group_id, $_SESSION['user_id']);
+
+    header('Location: event_view.php?event_id=' . $event_id . '&year=' . $_GET['year']);
+    exit;
+  }
 }
 ?>
 
@@ -38,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php
 $page_title = 'Edit Group';
 $page_styles = ['styles/groups.css'];
+$page_scripts = ['javascript/group_edit.js'];
 include 'templates/main_header.php'
 ?>
 
@@ -63,8 +75,8 @@ include 'templates/main_header.php'
         <input type="checkbox" id="is-private" name="is-private" <?php if ($group['group_pass']) {echo 'checked';} ?>>
         <label for="is-private">make private</label>
       </div>
-      <button type="submit" name="update-group-description">Edit</button>
-      <button type="submit" class="btn delete" name="delete-group">DELETE GROUP</button>
+      <button type="submit" name="update-group">Edit</button>
+      <button type="submit" class="btn delete" id="btn-delete-group" name="delete-group">DELETE GROUP</button>
     </form>
   </section>
 </section>

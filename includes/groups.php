@@ -23,7 +23,6 @@ function createGroup($creator_id, $group_name, $money_goal, $time, $place, $desc
   $group_description = empty($description) ? null : $description;
   $group_pass = $is_private ? generateRandomString() : null;
   
-  // insert new group into table 'groups'
   $stmt = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass)
                         VALUES (?, ?, ?, ?, ?, ?, ?)');
   $stmt->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass]);
@@ -37,8 +36,6 @@ function attachGroupToEvent($group_id, $event_id, $year) {
   $stmt = $pdo->prepare('INSERT INTO event_to_group
                         VALUES (?, ?, ?)');
   $stmt->execute([$event_id, $group_id, $year]);
-  
-  return $stmt->fetchAll();
 }
 
 function checkUserInGroup($user_id, $event_id, $group_id) {
@@ -62,7 +59,7 @@ function addUserToGroup($user_id, $group_id) {
     $stmt->execute([$user_id, $group_id]);
     return true;
   } catch(\PDOException $e) {
-    if ($e->getCode() === '23000') {
+    if ($e->getCode() == 23000) {
       return true;
     }
 
@@ -97,4 +94,13 @@ function updateGroup($group_id, $group_name, $money_goal, $time, $place, $descri
                         WHERE group_id = ?');
   $stmt->execute([$group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass, $group_id]);
 }
+
+function deleteGroup($group_id, $user_id) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('DELETE FROM groups
+                        WHERE group_id = ? AND creator_id = ?');
+  $stmt->execute([$group_id, $user_id]);
+}
+
 ?>
