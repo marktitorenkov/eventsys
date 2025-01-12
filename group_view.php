@@ -51,7 +51,7 @@ include 'templates/main_header.php'
     <?php if ($in_group): ?>
     <div>
       <form id="form-leave-group" method="POST">
-        <button type="submit" name="form-leave" class="btn group-leave">Leave Group</button>
+        <button type="submit" name="form-leave" class="btn delete">Leave Group</button>
       </form>
       <?php if ($user_id === $group['creator_id']): ?>
         <a class="btn" href="group_edit.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group_id ?>&year=<?php echo $year ?>">Edit Group</a>
@@ -76,7 +76,7 @@ include 'templates/main_header.php'
     <?php else: ?>
       <h2>Join to see more!</h2>
     <?php endif ?>
-      <button type="submit" name="form-join" class="btn group-join">Join Group</button>
+      <button type="submit" name="form-join" class="btn create">Join Group</button>
       <?php include 'templates/form_error.php'?>
     </form>
   </section>
