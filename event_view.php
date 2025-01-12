@@ -26,7 +26,8 @@ include 'templates/main_header.php'
     </div>
     <a class="btn" href="group_create.php?event_id=<?php echo $event_id?>&year=<?php echo $year ?>">Create Group</a>
   </header>
-    <h2><?php echo $event['name']; ?> | <?php echo date('d F Y, l', $correct_date) ?></h2>
+    <h2><?php echo $event['name']; ?> | <?php echo date('d F Y, l', $correct_date) ?>
+    <br><?php echo $event['description'];?></h2>
     <?php
     if (!empty($groups)):
     ?>

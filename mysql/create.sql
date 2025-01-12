@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 12, 2025 at 01:14 PM
+-- Generation Time: Jan 12, 2025 at 04:36 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -95,10 +95,10 @@ $$
 DELIMITER ;
 DROP TRIGGER IF EXISTS `BirthdayUpdate`;
 DELIMITER $$
-CREATE TRIGGER `BirthdayUpdate` AFTER UPDATE ON `users` FOR EACH ROW UPDATE events
+CREATE TRIGGER `BirthdayUpdate` AFTER UPDATE ON `users` FOR EACH ROW UPDATE events e
 SET
-date = (SELECT birthdate FROM users)
-WHERE events.admin LIKE users.id AND events.date NOT LIKE users.birthdate AND events.name LIKE 'Birthday%'
+e.date = NEW.birthdate
+WHERE e.admin=NEW.id AND NOT e.canChange
 $$
 DELIMITER ;
 
