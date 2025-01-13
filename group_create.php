@@ -1,6 +1,7 @@
 <?php
 require_once 'includes/session.php';
-require_once 'includes/db.php';
+require_once 'includes/getters.php';
+require_once 'includes/groups.php';
 
 ensureLoggedIn();
 
@@ -14,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $meeting_time = $_POST['meeting-time'];
   $meeting_place = $_POST['meeting-place'];
   $money_goal = $_POST['money-goal'];
-  $group_description = $_POST['description'];
-  $is_private = $_POST['is-private'];
+  $group_description = $_POST['group-description'] ?? null;
+  $is_private = $_POST['is-private'] ?? false;
 
   $error_messages = array();
 
@@ -34,13 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   if (empty($error_messages)) {
+    $user_id = $_SESSION['user_id'];
+
     $result = createGroup(
-      $_SESSION['user_id'],
+      $user_id,
       $group_name,
       $money_goal,
       $meeting_time,
       $meeting_place,
-      $description,
+      $group_description,
       $is_private,
     );
 
@@ -48,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $group_id = $result;
 
       attachGroupToEvent($group_id, $event_id, $year);
+      addUserToGroup($user_id, $group_id);
 
       header('Location: group_view.php?event_id=' . $event_id . '&group_id=' . $group_id . '&year=' . $year);
       exit;
@@ -66,16 +70,18 @@ include 'templates/main_header.php'
 
 <!-- attaching to event will show up in next years -->
 <section class="content">
-  <a href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
+  <div class="two-items-apart">
+    <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
+  </div>
   <h1><?php echo $event['name']?> | <?php echo date('d F Y, l', $correct_date) ?></h1>
   <h2>Create Group</h2>
-  <section class="content create-group">
+  <section class="content group-center">
     <form id="form-create-group" method="POST">
       <input type="text" name="group-name" placeholder="<?php echo $user['username']?>'s group">
       <input type="time" name="meeting-time" value="09:00:00">
       <input type="text" name="meeting-place" placeholder="Place">
       <input type="number" min="0" name="money-goal" placeholder="Money goal: 0">
-      <textarea form="form-create-group" type="text" name="description" placeholder="Description"></textarea>
+      <textarea form="form-create-group" type="text" name="group-description" placeholder="Description"></textarea>
       <div class="form-checkbox-wrapper">
         <input type="checkbox" id="is-private" name="is-private">
         <label for="is-private">make private</label>

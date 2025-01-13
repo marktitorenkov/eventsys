@@ -6,6 +6,9 @@
   --color-text: #000;
   --color-text-accent: #fff;
   --color-text-error: #f00;
+  --color-text-error-active: #e60000;
+  --color-text-confirm: #0f0;
+  --color-text-confirm-active: #00e600;
   --nav-height: 3.5em;
 }
 
@@ -68,11 +71,37 @@ a.btn {
   cursor: pointer;
   color: var(--color-text-accent);
   background-color: var(--color-accent);
+  text-align: center;
+  align-content: center;
 }
 
 button:hover,
 a.btn:hover {
   background-color: var(--color-accent-active);
+}
+
+button.create,
+a.btn.create {
+  color: var(--color-text-accent);
+  background-color: var(--color-text-confirm);
+}
+
+button.create:hover,
+a.btn.create:hover {
+  color: var(--color-text-accent);
+  background-color: var(--color-text-confirm-active);
+}
+
+button.delete,
+a.btn.delete {
+  color: var(--color-text-accent);
+  background-color: var(--color-text-error);
+}
+
+button.delete:hover,
+a.btn.delete:hover {
+  color: var(--color-text-accent);
+  background-color: var(--color-text-error-active);
 }
 
 p.error {

@@ -18,7 +18,12 @@ function active($param) {
   <?php foreach ($page_styles as $style): ?>
     <link rel="stylesheet" href="<?php echo $style?>">
   <?php endforeach ?>
-  <?php endif ?>
+  <?php endif ?> 
+  <?php if (isset($page_scripts)): ?>
+  <?php foreach ($page_scripts as $scr): ?>
+    <script src="<?php echo $scr ?>"></script>
+  <?php endforeach ?>
+  <?php endif ?> 
   <title><?php echo $page_title." | Events System" ?></title>
 </head>
 <body>

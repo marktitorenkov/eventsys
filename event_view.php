@@ -1,6 +1,6 @@
 <?php
 require_once 'includes/session.php';
-require_once 'includes/db.php';
+require_once 'includes/getters.php';
 
 ensureLoggedIn();
 
@@ -108,24 +108,37 @@ include 'templates/main_header.php';
 
   <?php if (!empty($groups)): ?>
     <ul class="group-list">
-      <?php foreach ($groups as $group): ?>
+    <?php
+    foreach ($groups as $group):
+    ?>
       <li>
-        <div>
-          <h3><?php echo $group['group_name']; ?></h3>
+        <div class="two-items-apart">
+          <h3>
+          <?php
+          if ($group['group_pass']) {
+            echo '&#x1F512 ';
+          }
+          echo $group['group_name']
+          ?>
+          </h3>
           <p><a href="group_view.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group['group_id'] ?>&year=<?php echo $year ?>">View</a></p>
         </div>
-        <div>
-          <p>Money goal: <?php echo $group['money_goal']; ?></p>
+        <div class="two-items-apart">
+          <p>Money goal: <?php echo $group['money_goal'] ?></p>
         </div>
-        <div>
-          <p>Meeting place: <?php echo $group['meeting_place']; ?></p>
-          <p>Meeting time: <?php echo date('h:i:sa', strtotime($group['meeting_time'])); ?></p>
+        <div class="two-items-apart">
+          <p>Meeting time: <?php echo date('h:i:sa', strtotime($group['meeting_time'])) ?></p>
+          <?php if ($group['meeting_place']): ?>
+            <p>Meeting place: <?php echo $group['meeting_place'] ?></p>
+          <?php endif ?>
         </div>
-        <div>
-          <p>Description: <?php echo $group['group_description']; ?></p>
+        <div class="two-items-apart">
+        <?php if ($group['group_description']): ?>
+          <p>Description: <?php echo $group['group_description'] ?></p>
+        <?php endif ?>
         </div>
       </li>
-      <?php endforeach; ?>
+    <?php endforeach ?>
     </ul>
   <?php else: ?>
     <p>No groups created. Be the first!</p>
