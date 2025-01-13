@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 12, 2025 at 04:36 PM
+-- Generation Time: Jan 13, 2025 at 09:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -67,7 +67,7 @@ CREATE TABLE `groups` (
   `meeting_time` time NOT NULL DEFAULT '09:00:00',
   `meeting_place` varchar(50) DEFAULT NULL,
   `group_description` varchar(250) DEFAULT NULL,
-  `group_pass` char(60) DEFAULT NULL
+  `group_pass` char(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -80,8 +80,8 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password_hash` char(60) NOT NULL,
-  `birthdate` date DEFAULT NULL
+  `birthdate` date DEFAULT NULL,
+  `password_hash` char(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -89,7 +89,7 @@ CREATE TABLE `users` (
 --
 DROP TRIGGER IF EXISTS `Birthday`;
 DELIMITER $$
-CREATE TRIGGER `Birthday` AFTER INSERT ON `users` FOR EACH ROW INSERT INTO `events` 
+CREATE TRIGGER `Birthday` AFTER INSERT ON `users` FOR EACH ROW INSERT INTO events 
 (admin,events.canChange, name,date,recurring) VALUES (NEW.username, 0, CONCAT('Birthday: ', NEW.username), NEW.birthdate, 1)
 $$
 DELIMITER ;
@@ -101,6 +101,18 @@ e.date = NEW.birthdate
 WHERE e.admin=NEW.id AND NOT e.canChange
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_in_group`
+--
+
+DROP TABLE IF EXISTS `user_in_group`;
+CREATE TABLE `user_in_group` (
+  `user_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -117,13 +129,15 @@ ALTER TABLE `events`
 --
 ALTER TABLE `event_to_group`
   ADD PRIMARY KEY (`event_id`,`group_id`),
+  ADD KEY `event_to_group_ibfk_1` (`event_id`),
   ADD KEY `event_to_group_ibfk_2` (`group_id`);
 
 --
 -- Indexes for table `groups`
 --
 ALTER TABLE `groups`
-  ADD PRIMARY KEY (`group_id`);
+  ADD PRIMARY KEY (`group_id`),
+  ADD KEY `groups_ibfk_1` (`creator_id`);
 
 --
 -- Indexes for table `users`
@@ -131,6 +145,14 @@ ALTER TABLE `groups`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indexes for table `user_in_group`
+--
+ALTER TABLE `user_in_group`
+  ADD PRIMARY KEY (`user_id`,`group_id`),
+  ADD KEY `user_in_group_ibfk_1` (`user_id`),
+  ADD KEY `user_in_group_ibfk_2` (`group_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -162,8 +184,21 @@ ALTER TABLE `users`
 -- Constraints for table `event_to_group`
 --
 ALTER TABLE `event_to_group`
-  ADD CONSTRAINT `event_to_group_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`),
-  ADD CONSTRAINT `event_to_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `groups` (`group_id`);
+  ADD CONSTRAINT `event_to_group_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `event_to_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `groups`
+--
+ALTER TABLE `groups`
+  ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_in_group`
+--
+ALTER TABLE `user_in_group`
+  ADD CONSTRAINT `user_in_group_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `user_in_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
