@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($password !== $confirm_password) {
     $error_messages[] = 'Passwords do not match!';
   }
-  elseif (!registerUser($username, $password)) {
+  elseif (!registerUser($username, $password, $birthdate)) {
     $error_messages[] = 'Username is already taken!';
   }
   else {

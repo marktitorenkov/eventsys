@@ -59,9 +59,9 @@ INSERT INTO `groups` (`group_id`, `creator_id`, `group_name`, `money_goal`, `mee
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password_hash`) VALUES
-(2, 'radoslav', '$2y$10$wDUBuVFZn/pMeWo7SaiV/OehsJc66NFdHEbgRpRMSqsjgUoBOYohW'),
-(4, 'mark', '$2y$10$EX82855JmY.wJNIIgvcemu/tLG6rSkfbV3wHiulNka8p.q7LuiGwC');
+INSERT INTO `users` (`id`, `username`, `birthdate`, `password_hash`) VALUES
+(2, 'radoslav', '1-1-1', '$2y$10$wDUBuVFZn/pMeWo7SaiV/OehsJc66NFdHEbgRpRMSqsjgUoBOYohW'),
+(4, 'mark', '1-1-1', '$2y$10$EX82855JmY.wJNIIgvcemu/tLG6rSkfbV3wHiulNka8p.q7LuiGwC');
 
 --
 -- Dumping data for table `user_in_group`
