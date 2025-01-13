@@ -8,13 +8,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $username = $_POST['username'];
   $password = $_POST['password'];
   $confirm_password = $_POST['confirm_password'];
+  $birthdate = $_POST['birthdate'];
 
   $error_messages = array();
 
   if ($password !== $confirm_password) {
     $error_messages[] = 'Passwords do not match!';
   }
-  elseif (!registerUser($username, $password)) {
+  elseif (!registerUser($username, $password, $birthdate)) {
     $error_messages[] = 'Username is already taken!';
   }
   else {
@@ -34,6 +35,7 @@ include 'templates/main_header.php'
     <h1>Register</h1>
     <form method="POST">
       <input type="text" name="username" placeholder="Username" required>
+      <input type="date" name="birthdate" value="" required>
       <input type="password" name="password" placeholder="Password" required>
       <input type="password" name="confirm_password" placeholder="Confirm Password" required>
       <button type="submit">Register</button>
