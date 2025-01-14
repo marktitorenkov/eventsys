@@ -23,7 +23,7 @@ function createGroup($creator_id, $group_name, $money_goal, $time, $place, $desc
   $group_description = empty($description) ? null : $description;
   $group_pass = $is_private ? generateRandomString() : null;
   
-  $stmt = $pdo->prepare('INSERT INTO groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass)
+  $stmt = $pdo->prepare('INSERT INTO event_groups (creator_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass)
                         VALUES (?, ?, ?, ?, ?, ?, ?)');
   $stmt->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass]);
   
@@ -89,7 +89,7 @@ function updateGroup($group_id, $group_name, $money_goal, $time, $place, $descri
   } // other 2 cases, we keep group_pass as is
 
 
-  $stmt = $pdo->prepare('UPDATE groups
+  $stmt = $pdo->prepare('UPDATE event_groups
                         SET group_name = ?, money_goal = ?, meeting_time = ?, meeting_place = ?, group_description = ?, group_pass = ?
                         WHERE group_id = ?');
   $stmt->execute([$group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass, $group_id]);
@@ -98,7 +98,7 @@ function updateGroup($group_id, $group_name, $money_goal, $time, $place, $descri
 function deleteGroup($group_id, $user_id) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('DELETE FROM groups
+  $stmt = $pdo->prepare('DELETE FROM event_groups
                         WHERE group_id = ? AND creator_id = ?');
   $stmt->execute([$group_id, $user_id]);
 }

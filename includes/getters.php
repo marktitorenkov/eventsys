@@ -28,7 +28,7 @@ function getGroupById($group_id) {
   $pdo = getPDO();
   
   $stmt = $pdo->prepare('SELECT *
-                        FROM groups
+                        FROM event_groups
                         WHERE group_id = ?');
   $stmt->execute([$group_id]);
   
@@ -38,9 +38,9 @@ function getGroupById($group_id) {
 function getGroupsByEventIdYear($event_id, $year) {
   $pdo = getPDO();
   
-  $stmt = $pdo->prepare('SELECT groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass
+  $stmt = $pdo->prepare('SELECT event_groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass
                         FROM event_to_group AS eg
-                        JOIN groups ON eg.group_id = groups.group_id
+                        JOIN event_groups ON eg.group_id = event_groups.group_id
                         WHERE event_id = ? AND year = ?');
   $stmt->execute([$event_id, $year]);
   
