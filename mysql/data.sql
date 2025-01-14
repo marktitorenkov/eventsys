@@ -48,7 +48,7 @@ INSERT INTO `event_to_group` (`event_id`, `group_id`, `year`) VALUES
 -- Dumping data for table `groups`
 --
 
-INSERT INTO `groups` (`group_id`, `creator_id`, `group_name`, `money_goal`, `meeting_time`, `meeting_place`, `group_description`, `group_pass`) VALUES
+INSERT INTO `event_groups` (`group_id`, `creator_id`, `group_name`, `money_goal`, `meeting_time`, `meeting_place`, `group_description`, `group_pass`) VALUES
 (1, 2, 'radoslavs group', 0, '09:00:00', 'MEETING PALCE TO MEET', NULL, NULL),
 (2, 2, 'private test', 0, '09:00:00', NULL, NULL, 'dCvtDaJW'),
 (3, 2, 'next years public group', 0, '09:00:00', NULL, NULL, NULL),

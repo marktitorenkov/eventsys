@@ -55,11 +55,11 @@ CREATE TABLE `event_to_group` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `groups`
+-- Table structure for table `event_groups`
 --
 
-DROP TABLE IF EXISTS `groups`;
-CREATE TABLE `groups` (
+DROP TABLE IF EXISTS `event_groups`;
+CREATE TABLE `event_groups` (
   `group_id` int(11) NOT NULL,
   `creator_id` int(11) NOT NULL,
   `group_name` varchar(50) NOT NULL,
@@ -133,11 +133,11 @@ ALTER TABLE `event_to_group`
   ADD KEY `event_to_group_ibfk_2` (`group_id`);
 
 --
--- Indexes for table `groups`
+-- Indexes for table `event_groups`
 --
-ALTER TABLE `groups`
+ALTER TABLE `event_groups`
   ADD PRIMARY KEY (`group_id`),
-  ADD KEY `groups_ibfk_1` (`creator_id`);
+  ADD KEY `event_groups_ibfk_1` (`creator_id`);
 
 --
 -- Indexes for table `users`
@@ -165,9 +165,9 @@ ALTER TABLE `events`
   MODIFY `event_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `groups`
+-- AUTO_INCREMENT for table `event_groups`
 --
-ALTER TABLE `groups`
+ALTER TABLE `event_groups`
   MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -185,20 +185,20 @@ ALTER TABLE `users`
 --
 ALTER TABLE `event_to_group`
   ADD CONSTRAINT `event_to_group_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `event_to_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `event_to_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `event_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `groups`
+-- Constraints for table `event_groups`
 --
-ALTER TABLE `groups`
-  ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `event_groups`
+  ADD CONSTRAINT `event_groups_ibfk_1` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_in_group`
 --
 ALTER TABLE `user_in_group`
   ADD CONSTRAINT `user_in_group_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `user_in_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `user_in_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `event_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
