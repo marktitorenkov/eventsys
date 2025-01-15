@@ -1,21 +1,21 @@
 /**
  * 
- * @param {HTMLSelectElement} rootElement The initial select element.
- * @param {Object} o Configuration object
- * @param {string} o.name
- * @param {{text: string, value: string}} o.selectedInitial
- * @param {number} o.debounceInterval
- * @param {number} o.fetchLimit
- * @param {(q: string, limit: number) => Promise<[{text: string, value: string}]>} o.fetchFn
+ * @param {HTMLSelectElement} rootElement The initial select element
+ * @param {Object} opt Configuration options
+ * @param {string} opt.name
+ * @param {number} opt.fetchLimit
+ * @param {number} opt.debounceInterval
+ * @param {{text: string, value: string}} opt.selectedInitial
+ * @param {(q: string, limit: number) => Promise<[{text: string, value: string}]>} opt.fetchFn
  */
-function selectDynamic(rootElement, o) {
+function selectDynamic(rootElement, opt) {
   const options = Object.assign({}, {
     name: rootElement.name,
-    selectedInitial: Array.from(rootElement.selectedOptions).map(o => ({text: o.textContent,  value: o.value})),
-    debounceInterval: rootElement.dataset.debounce || 200,
     fetchLimit: rootElement.dataset.limit || 5,
-    fetchFn: (q, limit) => fetch(rootElement.dataset.url+'?q='+q+'&limit='+limit).then(r => r.json()),
-  }, o)
+    debounceInterval: rootElement.dataset.debounce || 200,
+    selectedInitial: Array.from(rootElement.selectedOptions).map(s => ({text: s.textContent,  value: s.value})),
+    fetchFn: (q, limit) => fetch(rootElement.dataset.url+'?q='+encodeURIComponent(q)+'&limit='+limit).then(r => r.json()),
+  }, opt)
 
   function debounce(f, interval) {
     let timer = null
@@ -135,7 +135,7 @@ function selectDynamic(rootElement, o) {
 
     setResults(null)
     if (inputEl.value) {
-      fetchDebounced(encodeURIComponent(inputEl.value), options.fetchLimit)
+      fetchDebounced(inputEl.value, options.fetchLimit)
       .then(res => {
         const selectedValues = getSelected().map(s => s.value)
         res = res.filter(r => !selectedValues.some(s => s == r.value))
@@ -171,8 +171,7 @@ function selectDynamic(rootElement, o) {
   })
 
   container.appendChild(inputContainer)
-  rootElement.parentElement.appendChild(container)
-  rootElement.remove()
+  rootElement.replaceWith(container)
 
   options.selectedInitial.forEach(s => doSelect(s.text, s.value))
 }
