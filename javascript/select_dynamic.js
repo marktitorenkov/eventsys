@@ -1,4 +1,22 @@
-function selectDynamic(rootElement) {
+/**
+ * 
+ * @param {HTMLSelectElement} rootElement The initial select element.
+ * @param {Object} o Configuration object
+ * @param {string} o.name
+ * @param {{text: string, value: string}} o.selectedInitial
+ * @param {number} o.debounceInterval
+ * @param {number} o.fetchLimit
+ * @param {(q: string, limit: number) => Promise<[{text: string, value: string}]>} o.fetchFn
+ */
+function selectDynamic(rootElement, o) {
+  const options = Object.assign({}, {
+    name: rootElement.name,
+    selectedInitial: Array.from(rootElement.selectedOptions).map(o => ({text: o.textContent,  value: o.value})),
+    debounceInterval: rootElement.dataset.debounce || 200,
+    fetchLimit: rootElement.dataset.limit || 5,
+    fetchFn: (q, limit) => fetch(rootElement.dataset.url+'?q='+q+'&limit='+limit).then(r => r.json()),
+  }, o)
+
   function debounce(f, interval) {
     let timer = null
     return (...args) => {
@@ -9,7 +27,7 @@ function selectDynamic(rootElement) {
     }
   }
 
-  const fetchDebounced = debounce(fetch, 200)
+  const fetchDebounced = debounce(options.fetchFn, options.debounceInterval)
 
   const [getSelected, createSelected, popSelected] = (function() {
     let selected = []
@@ -38,7 +56,7 @@ function selectDynamic(rootElement) {
 
       const itemData = document.createElement('input')
       itemData.type = 'hidden'
-      itemData.name = rootElement.name
+      itemData.name = options.name;
       itemData.value = value
       item.appendChild(itemData)
   
@@ -79,7 +97,6 @@ function selectDynamic(rootElement) {
           const result = document.createElement('div')
           result.className = 'result'
           result.textContent = r.text
-          result.dataset.value = r.value
           result.addEventListener('click', () => {
             onSelect(r.text, r.value)
           })
@@ -118,8 +135,7 @@ function selectDynamic(rootElement) {
 
     setResults(null)
     if (inputEl.value) {
-      fetchDebounced(rootElement.dataset.url+'?q='+encodeURIComponent(inputEl.value)+'&limit=5')
-      .then(res => res.json())
+      fetchDebounced(encodeURIComponent(inputEl.value), options.fetchLimit)
       .then(res => {
         const selectedValues = getSelected().map(s => s.value)
         res = res.filter(r => !selectedValues.some(s => s == r.value))
@@ -157,6 +173,8 @@ function selectDynamic(rootElement) {
   container.appendChild(inputContainer)
   rootElement.parentElement.appendChild(container)
   rootElement.remove()
+
+  options.selectedInitial.forEach(s => doSelect(s.text, s.value))
 }
 
-document.querySelectorAll('[data-select-dynamic]').forEach(selectDynamic)
+document.querySelectorAll('select[data-select-dynamic]').forEach(selectDynamic)
