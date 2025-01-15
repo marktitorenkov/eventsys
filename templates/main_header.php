@@ -1,6 +1,9 @@
 <?php
 require_once 'includes/gravatar.php';
 
+if (!isset($page_styles)) $page_styles = [];
+if (!isset($page_scripts)) $page_scripts = [];
+
 function active($param) {
   $isActive = basename($_SERVER['SCRIPT_NAME'], ".php") === $param;
   echo $isActive ? 'class="active"' : '';
@@ -14,16 +17,9 @@ function active($param) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="<?php echo gravatarUrl('Events System') ?>">
   <link rel="stylesheet" href="styles/main.css">
-  <?php if (isset($page_styles)): ?>
   <?php foreach ($page_styles as $style): ?>
     <link rel="stylesheet" href="<?php echo $style?>">
   <?php endforeach ?>
-  <?php endif ?> 
-  <?php if (isset($page_scripts)): ?>
-  <?php foreach ($page_scripts as $scr): ?>
-    <script src="<?php echo $scr ?>"></script>
-  <?php endforeach ?>
-  <?php endif ?> 
   <title><?php echo $page_title." | Events System" ?></title>
 </head>
 <body>

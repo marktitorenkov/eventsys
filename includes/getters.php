@@ -47,4 +47,16 @@ function getGroupsByEventIdYear($event_id, $year) {
   return $stmt->fetchAll();
 }
 
+function getUserNames($query, $limit) {
+  $pdo = getPDO();
+  
+  $stmt = $pdo->prepare('SELECT id, username
+                        FROM users
+                        WHERE username LIKE CONCAT(\'%\', ?, \'%\')
+                        LIMIT ?');
+  $stmt->execute([$query, $limit]);
+  
+  return $stmt->fetchAll();
+}
+
 ?>
