@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/session.php';
-require_once 'includes/getters.php';
-require_once 'includes/groups.php';
+require_once 'includes/db_events.php';
+require_once 'includes/db_groups.php';
 
 ensureLoggedIn();
 

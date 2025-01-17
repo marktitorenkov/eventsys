@@ -1,6 +1,6 @@
 <?php
 require_once 'includes/session.php';
-require_once 'includes/user_auth.php';
+require_once 'includes/db_users.php';
 
 ensureLoggedOut();
 
@@ -32,7 +32,7 @@ include 'templates/main_header.php'
     <form method="POST">
       <input type="text" name="username" placeholder="Username" required>
       <input type="password" name="password" placeholder="Password" required>
-      <button type="submit">Login</button>
+      <button type="submit" class="btn">Login</button>
       <?php include 'templates/form_error.php' ?>
     </form>
     <a href="register.php">Register</a>

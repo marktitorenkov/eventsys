@@ -67,7 +67,7 @@ include 'templates/main_header.php'
         <label for="recurring">Is Repeated</label>
       </div>
       
-      <button type="submit">Create</button>
+      <button class="btn" type="submit">Create</button>
       
       <!-- Include form error template if exists -->
       <?php include 'templates/form_error.php'; ?>

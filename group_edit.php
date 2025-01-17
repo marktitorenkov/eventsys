@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/session.php';
-require_once 'includes/getters.php';
-require_once 'includes/groups.php';
+require_once 'includes/db_groups.php';
 
 ensureLoggedIn();
 
@@ -34,8 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     header('Refresh:0');
+    exit;
   }
-  
+
   if (isset($_POST['delete-group'])) {
     deleteGroup($group_id, $_SESSION['user_id']);
 
@@ -75,7 +75,7 @@ include 'templates/main_header.php'
         <input type="checkbox" id="is-private" name="is-private" <?php if ($group['group_pass']) {echo 'checked';} ?>>
         <label for="is-private">make private</label>
       </div>
-      <button type="submit" name="update-group">Edit</button>
+      <button type="submit" class="btn" name="update-group">Edit</button>
       <button type="submit" class="btn delete" id="btn-delete-group" name="delete-group">DELETE GROUP</button>
     </form>
   </section>

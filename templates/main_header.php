@@ -35,6 +35,9 @@ function active($param) {
         <li>
           <a href="./" <?php active("index") ?>>Events</a>
         </li>
+        <li>
+          <a href="./users.php" <?php active("users") ?>>Users</a>
+        </li>
       </ul>
       <ul>
         <li>
@@ -42,9 +45,9 @@ function active($param) {
         </li>
         <li>
           <a href="profile.php" <?php active("profile") ?>>
-            <div class="profile">
+            <div class="profile-info">
               <strong><?php echo $user['username'] ?></strong>
-              <img alt="Your Profile" src="<?php gravatarUrl($user['username']) ?>">
+              <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($user) ?>">
             </div>
           </a>
         </li>

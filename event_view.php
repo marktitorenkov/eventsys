@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/session.php';
-require_once 'includes/getters.php';
 require_once 'includes/db_events.php';
+require_once 'includes/db_groups.php';
 
 ensureLoggedIn();
 
@@ -82,28 +82,28 @@ include 'templates/main_header.php';
       <label for="event_description">Event Description:</label>
       <textarea name="event_description" id="event_description" required><?php echo htmlspecialchars($event['description']); ?></textarea>
       
-      <button type="submit" name="modify_event">Save Changes</button>
-      <button type="button" onclick="toggleModifyForm()">Cancel</button>
+      <button type="submit" class="btn" name="modify_event">Save Changes</button>
+      <button type="button" class="btn" onclick="toggleModifyForm()">Cancel</button>
     </form>
 
-    <button id="modifyButton" onclick="toggleModifyForm()">Modify Event</button>
+    <button class="btn" id="modifyButton" onclick="toggleModifyForm()">Modify Event</button>
   <?php else: ?>
-    <button id="modifyButton" disabled>Modify Event (You are not the admin)</button>
+    <button class="btn" id="modifyButton" disabled>Modify Event (You are not the admin)</button>
   <?php endif; ?>
 
   <!-- Delete Event Button -->
   <?php if ($event['admin'] == $current_user_id): ?>
-    <button id="deleteButton" onclick="confirmDelete()">Delete Event</button>
+    <button class="btn" id="deleteButton" onclick="confirmDelete()">Delete Event</button>
   <?php else: ?>
-    <button id="deleteButton" disabled>Delete Event (You are not the admin)</button>
+    <button class="btn" id="deleteButton" disabled>Delete Event (You are not the admin)</button>
   <?php endif; ?>
 
   <!-- Confirmation Modal for Deleting Event -->
   <div id="deleteModal" style="display:none;">
     <p>Are you sure you want to delete this event?</p>
     <form method="POST">
-      <button type="submit" name="delete_event">Yes, Delete</button>
-      <button type="button" onclick="toggleDeleteModal()">Cancel</button>
+      <button type="submit" class="btn" name="delete_event">Yes, Delete</button>
+      <button type="button" class="btn" onclick="toggleDeleteModal()">Cancel</button>
     </form>
   </div>
 
