@@ -33,7 +33,7 @@ include 'templates/data_table.php'
   </header>
   <?php
   data_table(function($limit, $offset) { global $user, $query; return getUsers($user['id'], $query, $limit, $offset); },
-             function() { return getUsersCount(); },
+             function() { global $query; return getUsersCount($query); },
              10,
              [
               "Favorite" => function($row) {

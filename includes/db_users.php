@@ -34,12 +34,13 @@ function getUsers($viewer, $query, $limit, $offset) {
   return $stmt->fetchAll();
 }
 
-function getUsersCount() {
+function getUsersCount($query) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('SELECT COUNT(1)
-                        FROM users');
-  $stmt->execute();
+  $stmt = $pdo->prepare("SELECT COUNT(1)
+                        FROM users u
+                        WHERE u.username LIKE CONCAT('%', ?, '%')");
+  $stmt->execute([$query]);
 
   return $stmt->fetch()['COUNT(1)'];
 }
