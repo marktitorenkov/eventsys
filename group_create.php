@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   if (empty($error_messages)) {
-    $user_id = $_SESSION['user_id'];
+    $user_id = $user['id'];
 
     $result = createGroup(
       $user_id,

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 17, 2025 at 11:44 PM
+-- Generation Time: Jan 18, 2025 at 03:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,8 +31,7 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `events`;
 CREATE TABLE `events` (
   `event_id` int(11) NOT NULL,
-  `admin` int(11) NOT NULL,
-  `canChange` tinyint(1) DEFAULT 1,
+  `creator_id` int(11) DEFAULT NULL,
   `name` varchar(50) NOT NULL,
   `date` date NOT NULL,
   `description` varchar(100) NOT NULL,
@@ -93,27 +92,9 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(50) DEFAULT NULL,
-  `birthdate` date DEFAULT NULL,
+  `birthday_event` int(11) NOT NULL,
   `password_hash` char(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Triggers `users`
---
-DROP TRIGGER IF EXISTS `Birthday`;
-DELIMITER $$
-CREATE TRIGGER `Birthday` AFTER INSERT ON `users` FOR EACH ROW INSERT INTO events
-(admin, canChange, name, date, recurring) VALUES (NEW.id, FALSE, CONCAT('Birthday: ', NEW.username), NEW.birthdate, 1)
-$$
-DELIMITER ;
-DROP TRIGGER IF EXISTS `BirthdayUpdate`;
-DELIMITER $$
-CREATE TRIGGER `BirthdayUpdate` AFTER UPDATE ON `users` FOR EACH ROW UPDATE events e
-SET
-e.date = NEW.birthdate
-WHERE e.admin=NEW.id AND NOT e.canChange
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -135,7 +116,8 @@ CREATE TABLE `user_in_group` (
 -- Indexes for table `events`
 --
 ALTER TABLE `events`
-  ADD PRIMARY KEY (`event_id`);
+  ADD PRIMARY KEY (`event_id`),
+  ADD KEY `creator_id` (`creator_id`);
 
 --
 -- Indexes for table `event_groups`
@@ -164,7 +146,8 @@ ALTER TABLE `favorite_users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD KEY `birthday_event` (`birthday_event`);
 
 --
 -- Indexes for table `user_in_group`
@@ -201,6 +184,12 @@ ALTER TABLE `users`
 --
 
 --
+-- Constraints for table `events`
+--
+ALTER TABLE `events`
+  ADD CONSTRAINT `events_ibfk_1` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `event_groups`
 --
 ALTER TABLE `event_groups`
@@ -219,6 +208,12 @@ ALTER TABLE `event_to_group`
 ALTER TABLE `favorite_users`
   ADD CONSTRAINT `favorite_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `favorite_users_ibfk_2` FOREIGN KEY (`favorite_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`birthday_event`) REFERENCES `events` (`event_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_in_group`

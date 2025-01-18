@@ -8,7 +8,7 @@ $event_id = $_GET['event_id'];
 $group_id = $_GET['group_id'];
 $group = getGroupById($group_id);
 
-if (!checkUserInGroup($_SESSION['user_id'], $event_id, $group_id)) {
+if (!checkUserInGroup($user['id'], $event_id, $group_id)) {
   header('Location: group_view.php?event_id=' . $event_id . '&group_id=' . $group_id . '&year=' . $_GET['year']);
 }
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   if (isset($_POST['delete-group'])) {
-    deleteGroup($group_id, $_SESSION['user_id']);
+    deleteGroup($group_id, $user['id']);
 
     header('Location: event_view.php?event_id=' . $event_id . '&year=' . $_GET['year']);
     exit;

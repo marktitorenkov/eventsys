@@ -26,34 +26,27 @@ function getEventById($event_id) {
   return $stmt->fetch();
 }
 
-function getEventsByOwner($admin_id) {
+function getEventsByOwner($creator_id) {
   $pdo = getPDO();
   
   $stmt = $pdo->prepare('SELECT *
                          FROM events e
-                         WHERE e.admin = ?');
-  $stmt->execute([$admin_id]);
+                         WHERE e.creator_id = ?');
+  $stmt->execute([$creator_id]);
 
   return $stmt->fetchAll();
 }
 
 // Mutations
 
-function createEvent($admin,$canChange,$name,$date,$description,$recurring){
+function createEvent($creator, $name, $date, $description, $recurring) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare('INSERT INTO events (admin,canChange,name,date,description,recurring)
-                          VALUES(?,?,?,?,?,?)');
-  $stmt->execute([$admin, $canChange, $name,$date,$description,$recurring]);
-  
-  
+  $stmt = $pdo->prepare('INSERT INTO events (creator_id, name, date, description, recurring)
+                          VALUES(?,?,?,?,?)');
+  $stmt->execute([$creator, $name, $date, $description, $recurring]);
 
-  $stmt2 = $pdo->prepare('SELECT MAX(event_id)
-                          FROM events
-                          WHERE admin = ?');
-  $stmt2->execute([$admin]);
-
-  return $stmt2->fetch()['MAX(event_id)'];
+  return $pdo->lastInsertId();
 }
 
 function deleteEventById($event_id) {

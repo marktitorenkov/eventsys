@@ -6,7 +6,7 @@ require_once 'includes/db_groups.php';
 ensureLoggedIn();
 
 $year = $_GET['year'];
-$user_id = $_SESSION['user_id'];
+$user_id = $user['id'];
 $group_id = $_GET['group_id'];
 $event_id = $_GET['event_id'];
 $event = getEventById($event_id);

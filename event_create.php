@@ -26,8 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if (empty($error_messages)) {
     $result = createEvent(
-      $_SESSION['user_id'],
-      true,
+      $user['id'],
       $name,
       $date,
       $description,

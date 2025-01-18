@@ -7,9 +7,13 @@ function getUserById($user_id) {
   return null;
   
   $pdo = getPDO();
-  $stmt = $pdo->prepare('SELECT id, username, email, birthdate
-                        FROM users
-                        WHERE id = ?');
+  $stmt = $pdo->prepare('SELECT u.id,
+                                u.username,
+                                u.email,
+                                e.date AS birthdate
+                        FROM users u
+                        JOIN events e ON u.birthday_event = e.event_id
+                        WHERE u.id = ?');
   $stmt->execute([$user_id]);
   
   $user = $stmt->fetch();
@@ -23,9 +27,10 @@ function getUsers($viewer, $query, $limit, $offset) {
   $stmt = $pdo->prepare("SELECT u.id,
                                 u.username,
                                 u.email,
-                                u.birthdate,
+                                e.date AS birthdate,
                                 fu.favorite_user_id IS NOT NULL as favorite
                         FROM users u
+                        JOIN events e ON u.birthday_event = e.event_id
                         LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
                         WHERE u.username LIKE CONCAT('%', ?, '%')
                         LIMIT ? OFFSET ?");
@@ -60,21 +65,37 @@ function getUserNames($query, $limit) {
 // Mutations
 
 function registerUser($username, $password, $birthdate, $email) {
-  $pdo = getPDO();
   $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-  
-  $stmt = $pdo->prepare('INSERT INTO users (username, birthdate, email, password_hash)
-                        VALUES (?, ?, ?, ?)');
+
+  $pdo = getPDO();
+  $pdo->beginTransaction();
+
   try {
-    $stmt->execute([$username, $birthdate, $email, $hashed_password]);
-    return true;
+
+    $stmt = $pdo->prepare('INSERT INTO events (`name`, `date`, `recurring`)
+                          VALUES (?, ?, ?)');
+    $stmt->execute(['Birthday: '.$username, $birthdate, true]);
+    $event_id = $pdo->lastInsertId();
+
+    $stmt = $pdo->prepare('INSERT INTO users (username, birthday_event, email, password_hash)
+                          VALUES (?, ?, ?, ?)');
+    $stmt->execute([$username, $event_id, $email, $hashed_password]);
+    $user_id = $pdo->lastInsertId();
+
+    $stmt = $pdo->prepare('UPDATE events SET creator_id = ? WHERE event_id = ?');
+    $stmt->execute([$user_id, $event_id]);
+
   } catch (\PDOException $e) {
+    $pdo->rollback();
     // Duplicate entry (username already exists)
     if ($e->getCode() === '23000') {
       return false;
     }
     throw $e;
   }
+
+  $pdo->commit();
+  return true;
 }
 
 function loginUser($username, $password) {
@@ -94,11 +115,20 @@ function loginUser($username, $password) {
 
 function updateUser($id, $username, $email, $birthdate) {
   $pdo = getPDO();
+  $pdo->beginTransaction();
 
   $stmt = $pdo->prepare('UPDATE users
-                        SET username = ?, email = ?, birthdate = ?
+                        SET username = ?, email = ?
                         WHERE id = ?');
-  $stmt->execute([$username, $email, $birthdate, $id]);
+  $stmt->execute([$username, $email, $id]);
+
+  $stmt = $pdo->prepare('UPDATE events e
+                        JOIN users u ON e.event_id = u.birthday_event
+                        SET e.date = ?
+                        WHERE u.id = ?');
+  $stmt->execute([$birthdate, $id]);
+
+  $pdo->commit();
 }
 
 function updatePassword($id, $password) {
