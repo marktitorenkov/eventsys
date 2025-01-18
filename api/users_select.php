@@ -1,6 +1,6 @@
 <?php
 require_once '../includes/session.php';
-include_once '../includes/getters.php';
+require_once '../includes/db_users.php';
 
 ensureLoggedIn();
 

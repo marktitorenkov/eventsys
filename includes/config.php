@@ -6,6 +6,7 @@ $config = [
   'db_pass' => $_ENV["DB_PASS"] ?? '',
   'db_name' => 'eventsys',
 
+  'username_pattern' => '[a-zA-Z0-9]{3,50}',
   'group_pass_characters' => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
 ];
 

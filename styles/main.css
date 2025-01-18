@@ -34,20 +34,12 @@ ul {
   margin: 0;
 }
 
-main {
-  flex-grow: 1;
-}
-
 a {
   color: inherit;
 }
 
-form {
-  margin: 2em 0;
-}
-
 form input,
-form button,
+form .btn,
 form select,
 form .select-dynamic
 form textarea {
@@ -55,11 +47,10 @@ form textarea {
 }
 
 input,
-button,
 select,
 .select-dynamic,
 textarea,
-a.btn {
+.btn {
   display: block;
   font-size: inherit;
   font-family: inherit;
@@ -77,8 +68,7 @@ textarea:focus-within {
   outline: 1px solid var(--color-text);
 }
 
-button,
-a.btn {
+.btn {
   cursor: pointer;
   color: var(--color-text-accent);
   background-color: var(--color-accent);
@@ -86,33 +76,42 @@ a.btn {
   align-content: center;
 }
 
-button:hover,
-a.btn:hover {
+.btn:hover {
   background-color: var(--color-accent-active);
 }
 
-button.create,
-a.btn.create {
+.btn.create {
   color: var(--color-text-accent);
   background-color: var(--color-text-confirm);
 }
 
-button.create:hover,
-a.btn.create:hover {
+.btn.create:hover {
   color: var(--color-text-accent);
   background-color: var(--color-text-confirm-active);
 }
 
-button.delete,
-a.btn.delete {
+.btn.delete {
   color: var(--color-text-accent);
   background-color: var(--color-text-error);
 }
 
-button.delete:hover,
-a.btn.delete:hover {
+.btn.delete:hover {
   color: var(--color-text-accent);
   background-color: var(--color-text-error-active);
+}
+
+.btn.alt {
+  color: var(--color-text);
+  background-color: var(--color-background);
+}
+
+.btn-favorite {
+  font-size: 2em;
+  color: orange;
+  border: none;
+  background: unset;
+  cursor: pointer;
+  padding: 0;
 }
 
 p.error {
@@ -125,7 +124,11 @@ p.error {
   margin: 0 auto;
 }
 
-nav {
+body > main {
+  flex-grow: 1;
+}
+
+body > nav {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -136,43 +139,43 @@ nav {
   z-index: 1;
 }
 
-nav h1 {
+body > nav h1 {
   margin: 0;
   padding: 0;
 }
 
-nav .wrapper {
+body > nav .wrapper {
   display: flex;
   flex-direction: column;
 }
 
-nav a {
+body > nav a {
   text-decoration: none;
 }
 
-nav a:hover,
-nav a.active {
+body > nav a:hover,
+body > nav a.active {
   background-color: var(--color-accent-active);
 }
 
-nav ul {
+body > nav ul {
   display: flex;
   align-items: center;
   flex-direction: column;
 }
 
-nav ul.middle {
+body > nav ul.middle {
   flex-grow: 1;
   margin: 1em 0;
 }
 
-nav li {
+body > nav li {
   height: var(--nav-height);
   width: 100%;
 }
 
-nav li > a,
-nav li > span {
+body > nav li > a,
+body > nav li > span {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,16 +183,12 @@ nav li > span {
   height: 100%;
 }
 
-nav .profile {
-  display: flex;
-  align-items: center;
+body > nav .profile-info {
   height: 100%;
-  gap: 0.5em
 }
 
-nav .profile img {
+body > nav .profile-picture {
   height: 70%;
-  border-radius: 50%;
 }
 
 header {
@@ -215,6 +214,73 @@ header {
   justify-content: center;
 }
 
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1em
+}
+
+.profile-picture {
+  border-radius: 50%;
+  border: 1px solid #aaa;
+}
+
+.content.profile .profile-picture {
+  height: 4em;
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table table th,
+.data-table table td {
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.data-table table thead {
+  background: var(--color-accent);
+  color: var(--color-text-accent);
+}
+
+.data-table nav {
+  margin-top: 2em;
+  padding: 1em;
+  text-align: center;
+}
+
+.data-table nav a {
+  padding: 0.5em;
+}
+
+.form-filter {
+  width: unset;
+  display: flex;
+  gap: 0.5em
+}
+
+.form-filter input,
+.form-filter .btn {
+  padding: 0.5em;
+  width: unset;
+}
+
+.data-table.users th:nth-child(2) {
+  width: 100%;
+}
+
+.data-table.users td:nth-child(1) {
+  text-align: center;
+}
+
+.data-table.users .profile-picture {
+  width: 2em;
+}
+
+
 ul.date-list h2 {
   margin-top: 2em;
 }
@@ -236,35 +302,35 @@ ul.event-list li {
     padding-top: var(--nav-height);
   }
 
-  nav {
-    position: fixed;
-  }
-
-  nav h1 {
-    font-size: 1em;
-  }
-
   form input,
   form select,
   form .select-dynamic,
-  form button {
+  form .btn {
     width: 24em;
   }
 
-  nav .wrapper {
+  body > nav {
+    position: fixed;
+  }
+
+  body > nav h1 {
+    font-size: 1em;
+  }
+
+  body > nav .wrapper {
     flex-direction: row;
   }
 
-  nav ul {
+  body > nav ul {
     flex-direction: row;
   }
 
-  nav ul.middle {
+  body > nav ul.middle {
     flex-direction: row;
     margin: unset;
   }
 
-  nav li {
+  body > nav li {
     width: unset;
   }
 

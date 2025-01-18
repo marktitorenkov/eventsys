@@ -1,6 +1,7 @@
 <?php
+require_once 'includes/config.php';
 require_once 'includes/session.php';
-require_once 'includes/user_auth.php';
+require_once 'includes/db_users.php';
 
 ensureLoggedOut();
 
@@ -8,14 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $username = $_POST['username'];
   $password = $_POST['password'];
   $confirm_password = $_POST['confirm_password'];
-  $birthdate = $_POST['birthdate'];
 
   $error_messages = array();
 
   if ($password !== $confirm_password) {
     $error_messages[] = 'Passwords do not match!';
   }
-  elseif (!registerUser($username, $password, $birthdate)) {
+  elseif (!registerUser($username, $password, $_POST['birthdate'], $_POST['email'])) {
     $error_messages[] = 'Username is already taken!';
   }
   else {
@@ -34,11 +34,22 @@ include 'templates/main_header.php'
   <section class="content login">
     <h1>Register</h1>
     <form method="POST">
-      <input type="text" name="username" placeholder="Username" required>
+      <label>Username <b>*</b>
+        <input type="text" name="username" placeholder="Username" pattern="<?php echo $config['username_pattern'] ?>" required>
+      </label>
+      <label>Birthdate <b>*</b>
       <input type="date" name="birthdate" value="" required>
-      <input type="password" name="password" placeholder="Password" required>
-      <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-      <button type="submit">Register</button>
+      </label>
+      <label>Email
+        <input type="email" name="email" placeholder="Email">
+      </label>
+      <label>Password <b>*</b>
+        <input type="password" name="password" placeholder="Password" required>
+      </label>
+      <label>Confirm Password <b>*</b>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+      </label>
+      <button type="submit" class="btn">Register</button>
       <?php include 'templates/form_error.php' ?>
     </form>
     <a href="login.php">Login</a>

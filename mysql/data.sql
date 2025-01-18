@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 11, 2025 at 08:56 PM
+-- Generation Time: Jan 17, 2025 at 11:46 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -26,12 +26,12 @@ SET time_zone = "+00:00";
 -- Dumping data for table `events`
 --
 
-INSERT INTO `events` (`event_id`, `name`, `date`, `recurring`) VALUES
-(1, 'D Birthday', '2025-02-04', 1),
-(2, 'M Birthday', '2025-05-05', 1),
-(3, 'O Birthday', '2025-05-24', 1),
-(4, 'I Nameday', '2025-05-05', 1),
-(5, 'X+Y Wedding', '2025-08-15', 0);
+INSERT INTO `events` (`event_id`, `admin`, `canChange`, `name`, `date`, `description`, `recurring`) VALUES
+(1, 0, 1, 'D Birthday', '2025-02-04', '', 1),
+(2, 0, 1, 'M Birthday', '2025-05-05', '', 1),
+(3, 0, 1, 'O Birthday', '2025-05-24', '', 1),
+(4, 0, 1, 'I Nameday', '2025-05-05', '', 1),
+(5, 0, 1, 'X+Y Wedding', '2025-08-15', '', 0);
 
 --
 -- Dumping data for table `event_to_group`
@@ -45,7 +45,7 @@ INSERT INTO `event_to_group` (`event_id`, `group_id`, `year`) VALUES
 (2, 4, 2025);
 
 --
--- Dumping data for table `groups`
+-- Dumping data for table `event_groups`
 --
 
 INSERT INTO `event_groups` (`group_id`, `creator_id`, `group_name`, `money_goal`, `meeting_time`, `meeting_place`, `group_description`, `group_pass`) VALUES
@@ -59,9 +59,18 @@ INSERT INTO `event_groups` (`group_id`, `creator_id`, `group_name`, `money_goal`
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `birthdate`, `password_hash`) VALUES
-(2, 'radoslav', '1-1-1', '$2y$10$wDUBuVFZn/pMeWo7SaiV/OehsJc66NFdHEbgRpRMSqsjgUoBOYohW'),
-(4, 'mark', '1-1-1', '$2y$10$EX82855JmY.wJNIIgvcemu/tLG6rSkfbV3wHiulNka8p.q7LuiGwC');
+INSERT INTO `users` (`id`, `username`, `email`, `birthdate`, `password_hash`) VALUES
+(2, 'radoslav', NULL, '2001-09-26', '$2y$10$wDUBuVFZn/pMeWo7SaiV/OehsJc66NFdHEbgRpRMSqsjgUoBOYohW'),
+(4, 'mark', 'mark.titorenkov@outlook.com', '1999-05-05', '$2y$10$EX82855JmY.wJNIIgvcemu/tLG6rSkfbV3wHiulNka8p.q7LuiGwC'),
+(6, 'petya', NULL, '2001-02-13', '$2y$10$S6zkYQajUEh51bzqHUZmOumqU23cktVTSwwt13DVTjYlmjj7.djJO'),
+(7, 'messi', NULL, '1987-06-24', '$2y$10$Fbgyav1H1Dy7zItBpWzoRuwzteR4XbwVwp9AxwPi0Ly8zDwm.EqSW'),
+(8, 'ronaldo', NULL, '1985-02-05', '$2y$10$31I05JV7TIH0AwECz/jH7.ZfDV.r7j7NLIa7CrmYA6TV8gcUoGOym'),
+(9, 'LeoDiCaprio', NULL, '1974-11-11', '$2y$10$aGPPV3qBZd54V6Qijd40NOSdf2lDK/o5huS1AlUIf0SXWoxAfs47u'),
+(10, 'BradPitt', NULL, '1963-12-18', '$2y$10$87qU/J13K19JY/Q7Gl8c3uDUbEL7tfWX6gaJwXSj48Qs/xlqhVvKS'),
+(11, 'TomCruise', NULL, '1962-07-03', '$2y$10$5Am/V9UJGjdBICgW0N9CUOkPQlSQFxu2hpnKAqBmtcXNLv5a4tw/O'),
+(12, 'TaylorSwift', NULL, '1989-12-13', '$2y$10$BzOrCahDfLUGYQ1eZfI6BOjByN9yzsbFEpI4ytVyaHy9KDeizVsOO'),
+(13, 'Beyonce', NULL, '1981-09-04', '$2y$10$LMHMCy8rKKJNTcGDsP4jVeTVhz1bjNsqckBbi9jalBhQ98THgxuKG'),
+(14, 'KanyeWest', NULL, '1977-06-08', '$2y$10$QMm.iiG5LPpgwvG56KWVy.tD6/3ThTnTDd/Z7.7o0.Nm0Fko5zr6m');
 
 --
 -- Dumping data for table `user_in_group`

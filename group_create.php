@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/session.php';
-require_once 'includes/getters.php';
-require_once 'includes/groups.php';
+require_once 'includes/db_events.php';
+require_once 'includes/db_groups.php';
 
 ensureLoggedIn();
 
@@ -86,7 +86,7 @@ include 'templates/main_header.php'
         <input type="checkbox" id="is-private" name="is-private">
         <label for="is-private">make private</label>
       </div>
-      <button type="submit">Create</button>
+      <button type="submit" class="btn">Create</button>
       <?php include 'templates/form_error.php' ?>
     </form>
   </section>

@@ -1,4 +1,43 @@
 <?php
+require_once "db.php";
+
+// Queries
+
+function getEvents() {
+  $pdo = getPDO();
+  
+  $stmt = $pdo->prepare('SELECT *
+                        FROM events');
+  $stmt->execute();
+  
+  return $stmt->fetchAll();
+}
+
+function getEventById($event_id) {
+  if ($event_id === null)
+  return null;
+  
+  $pdo = getPDO();
+  $stmt = $pdo->prepare('SELECT *
+                        FROM events
+                        WHERE event_id = ?');
+  $stmt->execute([$event_id]);
+  
+  return $stmt->fetch();
+}
+
+function getEventsByOwner($admin_id) {
+  $pdo = getPDO();
+  
+  $stmt = $pdo->prepare('SELECT *
+                         FROM events e
+                         WHERE e.admin = ?');
+  $stmt->execute([$admin_id]);
+
+  return $stmt->fetchAll();
+}
+
+// Mutations
 
 function createEvent($admin,$canChange,$name,$date,$description,$recurring){
   $pdo = getPDO();

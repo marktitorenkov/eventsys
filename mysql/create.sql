@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 13, 2025 at 09:11 PM
+-- Generation Time: Jan 17, 2025 at 11:44 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,19 +42,6 @@ CREATE TABLE `events` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `event_to_group`
---
-
-DROP TABLE IF EXISTS `event_to_group`;
-CREATE TABLE `event_to_group` (
-  `event_id` int(11) NOT NULL,
-  `group_id` int(11) NOT NULL,
-  `year` smallint(4) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `event_groups`
 --
 
@@ -73,6 +60,31 @@ CREATE TABLE `event_groups` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `event_to_group`
+--
+
+DROP TABLE IF EXISTS `event_to_group`;
+CREATE TABLE `event_to_group` (
+  `event_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL,
+  `year` smallint(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `favorite_users`
+--
+
+DROP TABLE IF EXISTS `favorite_users`;
+CREATE TABLE `favorite_users` (
+  `user_id` int(11) NOT NULL,
+  `favorite_user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -80,6 +92,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
+  `email` varchar(50) DEFAULT NULL,
   `birthdate` date DEFAULT NULL,
   `password_hash` char(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -89,8 +102,8 @@ CREATE TABLE `users` (
 --
 DROP TRIGGER IF EXISTS `Birthday`;
 DELIMITER $$
-CREATE TRIGGER `Birthday` AFTER INSERT ON `users` FOR EACH ROW INSERT INTO events 
-(admin,events.canChange, name,date,recurring) VALUES (NEW.username, 0, CONCAT('Birthday: ', NEW.username), NEW.birthdate, 1)
+CREATE TRIGGER `Birthday` AFTER INSERT ON `users` FOR EACH ROW INSERT INTO events
+(admin, canChange, name, date, recurring) VALUES (NEW.id, FALSE, CONCAT('Birthday: ', NEW.username), NEW.birthdate, 1)
 $$
 DELIMITER ;
 DROP TRIGGER IF EXISTS `BirthdayUpdate`;
@@ -125,6 +138,13 @@ ALTER TABLE `events`
   ADD PRIMARY KEY (`event_id`);
 
 --
+-- Indexes for table `event_groups`
+--
+ALTER TABLE `event_groups`
+  ADD PRIMARY KEY (`group_id`),
+  ADD KEY `event_groups_ibfk_1` (`creator_id`);
+
+--
 -- Indexes for table `event_to_group`
 --
 ALTER TABLE `event_to_group`
@@ -133,11 +153,11 @@ ALTER TABLE `event_to_group`
   ADD KEY `event_to_group_ibfk_2` (`group_id`);
 
 --
--- Indexes for table `event_groups`
+-- Indexes for table `favorite_users`
 --
-ALTER TABLE `event_groups`
-  ADD PRIMARY KEY (`group_id`),
-  ADD KEY `event_groups_ibfk_1` (`creator_id`);
+ALTER TABLE `favorite_users`
+  ADD UNIQUE KEY `favorite_users_unique` (`user_id`,`favorite_user_id`),
+  ADD KEY `favorite_user_id` (`favorite_user_id`);
 
 --
 -- Indexes for table `users`
@@ -181,6 +201,12 @@ ALTER TABLE `users`
 --
 
 --
+-- Constraints for table `event_groups`
+--
+ALTER TABLE `event_groups`
+  ADD CONSTRAINT `event_groups_ibfk_1` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `event_to_group`
 --
 ALTER TABLE `event_to_group`
@@ -188,10 +214,11 @@ ALTER TABLE `event_to_group`
   ADD CONSTRAINT `event_to_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `event_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `event_groups`
+-- Constraints for table `favorite_users`
 --
-ALTER TABLE `event_groups`
-  ADD CONSTRAINT `event_groups_ibfk_1` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `favorite_users`
+  ADD CONSTRAINT `favorite_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `favorite_users_ibfk_2` FOREIGN KEY (`favorite_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_in_group`
