@@ -12,37 +12,32 @@ $correct_date = strtotime(date('d M ', strtotime($event['date'])) . $year);
 $groups = getGroupsByEventIdYear($event_id, $year);
 
 // Check if the logged-in user is the admin of the event
-$current_user_id = $_SESSION['user_id']; // Assuming the user ID is stored in session
+$viewer_admin = $event['creator_id'] == $user['id'];
 
 // Handle Delete request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_event'])) {
-    // Check if the current user is the admin of the event
-    if ($event['admin'] != $current_user_id) {
-        // If not the admin, show an error message
-        $error_message = "You do not have permission to delete this event.";
-    } else {
-        // If the user is the admin, proceed with the deletion
-        deleteEventById($event_id);
-        header("Location: index.php"); // Redirect to events list after delete
-        exit();
-    }
+  if (!$viewer_admin) {
+    $error_message = "You do not have permission to delete this event.";
+  } else {
+    deleteEventById($event_id);
+    header("Location: index.php"); // Redirect to events list after delete
+    exit();
+  }
 }
 
 // Handle Modify request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['modify_event'])) {
-    // Check if the current user is the admin of the event
-    if ($event['admin'] != $current_user_id) {
-        // If not the admin, show an error message
-        $error_message = "You do not have permission to modify this event.";
-    } else {
-        $modified_name = $_POST['event_name'];
-        $modified_date = $_POST['event_date']; // Get the new date from the form
-        $modified_description = $_POST['event_description'];
-        
-        modifyEvent($event_id, $modified_name, $modified_date, $modified_description);
-        header("Location: event_view.php?event_id=$event_id&year=$year"); // Reload the page after modifying
-        exit();
-    }
+  if (!$viewer_admin) {
+    $error_message = "You do not have permission to modify this event.";
+  } else {
+    $modified_name = $_POST['event_name'];
+    $modified_date = $_POST['event_date']; // Get the new date from the form
+    $modified_description = $_POST['event_description'];
+    
+    modifyEvent($event_id, $modified_name, $modified_date, $modified_description);
+    header("Location: event_view.php?event_id=$event_id&year=$year"); // Reload the page after modifying
+    exit();
+  }
 }
 
 ?>
@@ -71,7 +66,7 @@ include 'templates/main_header.php';
   <?php endif; ?>
 
   <!-- Modify Event Form (Visible only when modifying and admin) -->
-  <?php if ($event['admin'] == $current_user_id): ?>
+  <?php if ($viewer_admin): ?>
     <form method="POST" id="modifyForm" style="display:none;">
       <label for="event_name">Event Name:</label>
       <input type="text" name="event_name" id="event_name" value="<?php echo htmlspecialchars($event['name']); ?>" required>
@@ -92,7 +87,7 @@ include 'templates/main_header.php';
   <?php endif; ?>
 
   <!-- Delete Event Button -->
-  <?php if ($event['admin'] == $current_user_id): ?>
+  <?php if ($viewer_admin): ?>
     <button class="btn" id="deleteButton" onclick="confirmDelete()">Delete Event</button>
   <?php else: ?>
     <button class="btn" id="deleteButton" disabled>Delete Event (You are not the admin)</button>

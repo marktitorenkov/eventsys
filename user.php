@@ -32,7 +32,7 @@ include 'templates/main_header.php';
     <ul>
     <?php foreach ($events as $event): ?>
       <li>
-        <a href="<?php echo "event_view.php?event_id=".$event['event_id']."&year=".date('Y', strtotime($event['date'])) ?>">
+        <a href="<?php echo "event_view.php?event_id=".$event['event_id']."&year=".date('Y') ?>">
           <?php echo $event['name'] ?> |
           <?php echo $event['date'] ?> |
           <?php echo $event['recurring'] ? "Recurring" : "Non Recurring" ?>
