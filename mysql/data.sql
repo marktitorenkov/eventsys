@@ -31,18 +31,7 @@ INSERT INTO `events` (`event_id`, `admin`, `canChange`, `name`, `date`, `descrip
 (2, 0, 1, 'M Birthday', '2025-05-05', '', 1),
 (3, 0, 1, 'O Birthday', '2025-05-24', '', 1),
 (4, 0, 1, 'I Nameday', '2025-05-05', '', 1),
-(5, 0, 1, 'X+Y Wedding', '2025-08-15', '', 0),
-(6, 2, 0, 'Birthday: radoslav', '2002-09-26', '', 1),
-(7, 4, 0, 'Birthday: mark', '1999-05-05', '', 1),
-(9, 6, 0, 'Birthday: petya', '2001-02-13', '', 1),
-(10, 7, 0, 'Birthday: messi', '1987-06-24', '', 1),
-(11, 8, 0, 'Birthday: ronaldo', '1985-02-05', '', 1),
-(12, 9, 0, 'Birthday: LeoDiCaprio', '1974-11-11', '', 1),
-(13, 10, 0, 'Birthday: BradPitt', '1963-12-18', '', 1),
-(14, 11, 0, 'Birthday: TomCruise', '1962-07-03', '', 1),
-(15, 12, 0, 'Birthday: TaylorSwift', '1989-12-13', '', 1),
-(16, 13, 0, 'Birthday: Beyonce', '1981-09-04', '', 1),
-(17, 14, 0, 'Birthday: KanyeWest', '1977-06-08', '', 1);
+(5, 0, 1, 'X+Y Wedding', '2025-08-15', '', 0);
 
 --
 -- Dumping data for table `event_to_group`
