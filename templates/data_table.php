@@ -1,5 +1,13 @@
 <?php
 function data_table($get_records, $get_records_count, $pageSize, $columns) {
+  function page_url($page) {
+    $parsedUrl = parse_url($_SERVER['REQUEST_URI']);
+    $queryParams = [];
+    parse_str($parsedUrl['query'] ?? '', $queryParams);
+    $queryParams['p'] = $page;
+    return $parsedUrl['path'] . '?' . http_build_query($queryParams);
+  }
+
   $page = max($_GET['p'] ?? 1, 1);
   $records = $get_records($pageSize, ($page - 1) * $pageSize);
   $totalPages = ceil($get_records_count() / $pageSize);
@@ -29,13 +37,13 @@ function data_table($get_records, $get_records_count, $pageSize, $columns) {
     </table>
 
     <nav>
-      <a <?php echo $page > 1 ? 'href="'.$baseUrl.'?p=1"' : '' ?>>&lt;&lt;</a>
-      <a <?php echo $page > 1 ? 'href="'.$baseUrl.'?p='.($page - 1).'"' : '' ?>>&lt;</a>
+      <a <?php echo $page > 1 ? 'href="'.page_url(1).'"' : '' ?>>&lt;&lt;</a>
+      <a <?php echo $page > 1 ? 'href="'.page_url($page - 1).'"' : '' ?>>&lt;</a>
       <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-        <a <?php echo $i != $page ? 'href="'.$baseUrl.'?p='.$i.'"' : '' ?>><?php echo $i ?></a>
+        <a <?php echo $i != $page ? 'href="'.page_url($i).'"' : '' ?>><?php echo $i ?></a>
       <?php endfor ?>
-      <a <?php echo $page < $totalPages ? 'href="'.$baseUrl.'?p='.($page + 1).'"' : '' ?>>&gt;</a>
-      <a <?php echo $page < $totalPages ? 'href="'.$baseUrl.'?p='.($totalPages).'"' : '' ?>>&gt;&gt;</a>
+      <a <?php echo $page < $totalPages ? 'href="'.page_url($page + 1).'"' : '' ?>>&gt;</a>
+      <a <?php echo $page < $totalPages ? 'href="'.page_url($totalPages).'"' : '' ?>>&gt;&gt;</a>
     </nav>
 
   <section>
