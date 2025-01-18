@@ -7,10 +7,27 @@ ul.group-list li {
   padding: 1em;
 }
 
-.two-items-apart {
+.two-items {
   display: flex;
-  justify-content: space-between;
   margin: 4px;
+  justify-content: center;
+}
+
+.two-items button{
+  width: 200px;
+  margin: 5px;
+}
+
+.two-items.between {
+  justify-content: space-between;
+}
+
+.two-items.evenly {
+  justify-content: space-evenly;
+}
+
+.content.hidden {
+  display: none;
 }
 
 .content.group-center {

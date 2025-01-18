@@ -70,7 +70,7 @@ include 'templates/main_header.php'
 
 <!-- attaching to event will show up in next years -->
 <section class="content">
-  <div class="two-items-apart">
+  <div class="two-items between">
     <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
   </div>
   <h1><?php echo $event['name']?> | <?php echo date('d F Y, l', $correct_date) ?></h1>

@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <?php
-$page_title = 'Edit Group';
+$page_title = 'Group Settings';
 $page_styles = ['styles/groups.css'];
 $page_scripts = ['javascript/group_edit.js'];
 include 'templates/main_header.php'
@@ -58,7 +58,11 @@ include 'templates/main_header.php'
     <a class="btn" href="group_view.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group_id ?>&year=<?php echo $_GET['year'] ?>">Go back</a>
     <h1><?php echo $group['group_name'] ?></h1>
   </header>
-  <section class="content group-center">
+  <div class="two-items">
+    <button class="btn" onclick="toggleEditGroupPanel()">&lt Edit Group</button>
+    <button class="btn" onclick="toggleGroupMembersPanel()">Group Members &gt</button>
+  </div>
+  <section id="group-edit-panel" class="content group-center">
     <form method="POST">
       <label for="group-name">Group name:</label>
       <input type="text" id="group-name" name="group-name" maxlength="50" value="<?php echo $group['group_name'] ?>">
@@ -76,8 +80,16 @@ include 'templates/main_header.php'
         <label for="is-private">make private</label>
       </div>
       <button type="submit" class="btn" name="update-group">Edit</button>
-      <button type="submit" class="btn delete" id="btn-delete-group" name="delete-group">DELETE GROUP</button>
+      <button type="button" id="btn-delete-group" class="btn delete" onclick="confirmGroupDelete()">DELETE GROUP</button>
+      <div id="delete-modal" style="display:none;">
+        <p>Are you sure you want to delete this group?</p>
+        <button type="submit" class="btn delete" name="delete-group">Yes, I'm sure.</button>
+        <button type="button" class="btn" onclick="confirmGroupDelete()">Cancel</button>
+      </div>
     </form>
+  </section>
+  <section id="group-members-panel" class="content hidden" style="display:none;">
+    <h2>Group user Panel</h2>
   </section>
 </section>
 

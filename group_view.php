@@ -46,7 +46,7 @@ include 'templates/main_header.php'
 ?>
 
 <section class="content">
-  <div class="two-items-apart">
+  <div class="two-items between">
     <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
     <?php if ($in_group): ?>
     <div>
