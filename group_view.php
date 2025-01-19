@@ -12,6 +12,12 @@ $event_id = $_GET['event_id'];
 $event = getEventById($event_id);
 $group = getGroupById($group_id);
 $group_pass = $group['group_pass'];
+
+if (checkGroupHiddenFromUser($user_id, $event_id, $group_id)) {
+  header('Location: event_view.php?event_id=' . $event_id . '&year=' . $_GET['year']);
+  exit;
+}
+
 $in_group = checkUserInGroup($user_id, $event_id, $group_id);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -19,14 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($group_pass) { // if group is private
       if ($group_pass === $_POST['group-pass']) { // user provided password is correct
-        addUserToGroup($user_id, $group_id);
+        addUserInGroup($user_id, $group_id);
         $in_group = true;
       } else { // user provided password is NOT correct
         $error_messages = ['Group pass is incorrect. Please try again.'];
         $in_group = false;
       }
     } else { // if group is public
-      addUserToGroup($user_id, $group_id);
+      addUserInGroup($user_id, $group_id);
       $in_group = true;
     }
   }
@@ -34,6 +40,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['form-leave'])) { // leave group
     removeUserFromGroup($user_id, $group_id);
     $in_group = false;
+
+    $users_in_group = getUsersInGroup($group_id); // get all users in group, excluding hidden
+
+    // if there is at least one other users in group after admin leaves
+    if (count($users_in_group) > 0) { // chose a random user for new admin
+      $rand_key = array_rand($users_in_group);
+
+      updateGroup(
+        $group_id,
+        $users_in_group[$rand_key]['user_id'],
+        $group['group_name'],
+        $group['money_goal'],
+        $group['meeting_time'],
+        $group['meeting_place'],
+        $group['group_description'],
+        $group['group_pass']
+      );
+    } else { // otherwise, delete group
+      deleteGroup($group_id, $user_id);
+      header('Location: event_view.php?event_id=' . $event_id . '&year=' . $year);
+      exit;
+    }
   }
 }
 ?>
@@ -47,7 +75,7 @@ include 'templates/main_header.php'
 
 <section class="content">
   <div class="two-items between">
-    <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
+    <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">&lt Go back</a>
     <?php if ($in_group): ?>
     <div>
       <form id="form-leave-group" method="POST">
@@ -68,7 +96,7 @@ include 'templates/main_header.php'
       <h2>...Chat...</h2>
     </header>
   <?php else: ?>  <!-- User NOT in group => JOIN before show content-->
-  <section class="content group-center">
+  <section class="content group-form">
     <form method="POST">
     <?php if ($group_pass): ?> <!-- Group is PRIVATE => need GROUP PASS -->
       <h2>Group is private. You need its <span class="hover-pop-up" title="8 character long password. Ask group creator for it.">GROUP PASS</span> to join.</h2>

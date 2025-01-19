@@ -134,11 +134,11 @@ include 'templates/main_header.php';
             <p>Meeting place: <?php echo $group['meeting_place'] ?></p>
           <?php endif ?>
         </div>
-        <div class="two-items between">
-        <?php if ($group['group_description']): ?>
+        <?php if($group['group_description']): ?>
+          <div class="two-items between">
           <p>Description: <?php echo $group['group_description'] ?></p>
-        <?php endif ?>
         </div>
+        <?php endif ?>
       </li>
     <?php endforeach ?>
     </ul>

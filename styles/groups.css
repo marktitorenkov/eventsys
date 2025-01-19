@@ -1,16 +1,16 @@
 ul.group-list li {
-  display: block;
   border: 1px solid var(--color-accent);
   background-color: var(--color-background-body);
   border-radius: 0.5em;
-  margin: 1em 0;
-  padding: 1em;
+  margin: 0.5em 0;
+  padding: 0.5em;
 }
 
 .two-items {
   display: flex;
   margin: 4px;
   justify-content: center;
+  white-space: nowrap;
 }
 
 .two-items button{
@@ -26,29 +26,18 @@ ul.group-list li {
   justify-content: space-evenly;
 }
 
-.content.hidden {
-  display: none;
-}
-
-.content.group-center {
-  margin: 0.5em;
-  padding: 0.5em;
-}
-
-.content.group-center form {
+.content.group-form form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0.5em;
-  padding: 0.5em;
 }
 
-.content.group-center input {
+.content.group-form input {
   width: 80%;
   margin: 4px;
 }
 
-.content.group-center textarea {
+.content.group-form textarea {
   width: 80%;
   min-height: 100px;
   max-height: 150px;
@@ -57,17 +46,18 @@ ul.group-list li {
   resize: vertical;
 }
 
-.form-checkbox-wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  white-space: nowrap;
+.hover-pop-up {
+  text-decoration: underline;
 }
 
-#form-leave-group {
-  margin: 0;
-  padding: 0;
-  max-width: 250px;
+.data-table.group_edit .btn {
+  max-width: 200px;
+  margin: 4px;
+  padding: 4px;
+}
+
+#group-add-panel .data-table.group_edit .profile-picture {
+  width: 3.5em;
 }
 
 #form-leave-group button {

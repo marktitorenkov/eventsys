@@ -1,27 +1,28 @@
 <?php
-function data_table($get_records, $get_records_count, $pageSize, $columns) {
-  function page_url($page) {
-    $parsedUrl = parse_url($_SERVER['REQUEST_URI']);
-    $queryParams = [];
-    parse_str($parsedUrl['query'] ?? '', $queryParams);
-    $queryParams['p'] = $page;
-    return $parsedUrl['path'] . '?' . http_build_query($queryParams);
-  }
+function page_url($page) {
+  $parsedUrl = parse_url($_SERVER['REQUEST_URI']);
+  $queryParams = [];
+  parse_str($parsedUrl['query'] ?? '', $queryParams);
+  $queryParams['p'] = $page;
+  return $parsedUrl['path'] . '?' . http_build_query($queryParams);
+}
 
+function data_table($get_records, $get_records_count, $pageSize, $columns, $columns_widths = null) {
   $page = max($_GET['p'] ?? 1, 1);
   $records = $get_records($pageSize, ($page - 1) * $pageSize);
   $totalPages = ceil($get_records_count() / $pageSize);
   $baseUrl = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
   $render_default = function($row, $key) { echo $key ? $row[$key] : ""; };
-  $additiona_class = basename($_SERVER['SCRIPT_NAME'], ".php");
+  $additional_class = basename($_SERVER['SCRIPT_NAME'], ".php");
+  $i = 0;
 ?>
-  <section class="data-table <?php echo $additiona_class ?>">
+  <section class="data-table <?php echo $additional_class ?>">
 
     <table>
       <thead>
         <tr>
         <?php foreach ($columns as $key => $column): ?>
-          <th><?php echo $key ?></th>
+          <th <?php if (isset($columns_widths)) echo 'style=width:' . $columns_widths[$i++] ?>><?php echo $key ?></th>
         <?php endforeach ?>
         </tr>
       </thead>
@@ -46,5 +47,5 @@ function data_table($get_records, $get_records_count, $pageSize, $columns) {
       <a <?php echo $page < $totalPages ? 'href="'.page_url($totalPages).'"' : '' ?>>&gt;&gt;</a>
     </nav>
 
-  <section>
+  </section>
 <?php } ?>
