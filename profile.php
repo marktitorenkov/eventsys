@@ -26,13 +26,13 @@ include 'templates/main_header.php';
     </section>
     <form method="POST">
       <h2>Edit information</h2>
-      <label>Username <b>*</b>
+      <label>Username <b class="red">*</b>
         <input type="text" name="username" placeholder="Username" pattern="<?php echo $config['username_pattern'] ?>" value="<?php echo $user['username'] ?>" required>
       </label>
       <label>Email
         <input type="email" name="email" placeholder="Email" value="<?php echo $user['email'] ?>">
       </label>
-      <label>Birthday <b>*</b>
+      <label>Birthday <b class="red">*</b>
         <input type="date" name="birthdate" placeholder="Birthday" value="<?php echo $user['birthdate'] ?>" required>
       </label>
       <button type="submit" class="btn">Edit</button>

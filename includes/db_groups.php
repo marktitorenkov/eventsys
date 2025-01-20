@@ -14,14 +14,23 @@ function getGroupById($group_id) {
   return $stmt->fetch();
 }
 
-function getGroupsByEventIdYear($event_id, $year) {
+function getGroupsByEventIdYear($user_id, $event_id, $year) {
   $pdo = getPDO();
   
-  $stmt = $pdo->prepare('SELECT event_groups.group_id, group_name, money_goal, meeting_time, meeting_place, group_description, group_pass
-                        FROM event_to_group AS eg
-                        JOIN event_groups ON eg.group_id = event_groups.group_id
-                        WHERE event_id = ? AND year = ?');
-  $stmt->execute([$event_id, $year]);
+  // get groups for given Event and Year
+  // exclude groups that are hidden for given User
+  $stmt = $pdo->prepare('SELECT g.group_id,
+                                      group_name,
+                                      money_goal,
+                                      meeting_time,
+                                      meeting_place,
+                                      group_description,
+                                      group_pass
+                                FROM event_to_group AS eg
+                                JOIN event_groups g ON eg.group_id = g.group_id
+                                    LEFT JOIN user_hidden_group uhg ON eg.group_id = uhg.group_id AND uhg.user_id = ?
+                                WHERE event_id = ? AND year = ? AND uhg.user_id IS NULL');
+  $stmt->execute([$user_id, $event_id, $year]);
   
   return $stmt->fetchAll();
 }
@@ -173,7 +182,7 @@ function updateGroup($group_id, $creator_id, $group_name, $money_goal, $time, $p
 
 function getUsersInGroup($group_id, $limit = null, $offset = null, $include_hidden = false) {
   $pdo = getPDO();
-
+  
   // Inner Table: 'Users In Group' Union 'Users Hidden From Group'
   // Outer Table: adds username and email to result from Inner Table
   // user_status: 0 = group admin / 1 = user in group / 2 = group hidden from user
@@ -232,6 +241,7 @@ function getUsersInGroupCount($group_id) {
 }
 
 function getUsersNotInGroup($group_id, $viewer, $query, $limit, $offset) {
+  // TODO: exclude users who cannot see Event, so that group admin can't add them to group
   $pdo = getPDO();
 
   // select users not in group and users group is not hidden from

@@ -26,13 +26,13 @@ include 'templates/main_header.php'
   <section class="profile-container">
     <h1>Change your password</h1>
     <form method="POST">
-      <label>Current Password <b>*</b>
+      <label>Current Password <b class="red">*</b>
         <input type="password" name="current" required>
       </label>
-      <label>New Password <b>*</b>
+      <label>New Password <b class="red">*</b>
         <input type="password" name="new" required>
       </label>
-      <label>Repeat New Password <b>*</b>
+      <label>Repeat New Password <b class="red">*</b>
         <input type="password" name="new_repeat" required>
       </label>
       <?php include 'templates/form_error.php' ?>

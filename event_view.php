@@ -9,7 +9,7 @@ $event_id = $_GET['event_id'];
 $year = $_GET['year'];
 $event = getEventById($event_id);
 $correct_date = strtotime(date('d M ', strtotime($event['date'])) . $year);
-$groups = getGroupsByEventIdYear($event_id, $year);
+$groups = getGroupsByEventIdYear($user['id'], $event_id, $year);
 
 // Check if the logged-in user is the admin of the event
 $viewer_admin = $event['creator_id'] == $user['id'];
