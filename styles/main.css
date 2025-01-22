@@ -62,11 +62,21 @@ textarea,
   text-decoration: none;
 }
 
+input[type=checkbox],
+input[type=radio] {
+  width: unset;
+  display: unset;
+}
+
 input:focus-within,
 select:focus-within,
 .select-dynamic:focus-within,
 textarea:focus-within {
   outline: 1px solid var(--color-text);
+}
+
+label {
+  display: block;
 }
 
 .btn {
@@ -307,6 +317,10 @@ ul.event-list li {
   justify-content: space-between;
 }
 
+ul.date-list.hide .hidden {
+  display: none;
+}
+
 /* Large screens only */
 @media only screen and (min-width: 768px) {
 
@@ -318,7 +332,8 @@ ul.event-list li {
   form input,
   form select,
   form .select-dynamic,
-  form .btn {
+  form .btn,
+  textarea {
     width: 24em;
   }
 

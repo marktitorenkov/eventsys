@@ -11,62 +11,62 @@ $event = getEventById($event_id);
 $correct_date = strtotime(date('d M ', strtotime($event['date'])) . $year);
 $groups = getGroupsByEventIdYear($user['id'], $event_id, $year);
 
-// Check if the logged-in user is the admin of the event
 $viewer_admin = $event['creator_id'] == $user['id'];
 
-// Handle Delete request
+$hidden_select = getHiddenSelect($event_id);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_event'])) {
   if (!$viewer_admin) {
     $error_message = "You do not have permission to delete this event.";
   } else {
     deleteEventById($event_id);
-    header("Location: index.php"); // Redirect to events list after delete
+    header("Location: index.php");
     exit();
   }
 }
 
-// Handle Modify request
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['modify_event'])) {
   if (!$viewer_admin) {
     $error_message = "You do not have permission to modify this event.";
   } else {
     $modified_name = $_POST['event_name'];
-    $modified_date = $_POST['event_date']; // Get the new date from the form
+    $modified_date = $_POST['event_date'];
     $modified_description = $_POST['event_description'];
     
-    modifyEvent($event_id, $modified_name, $modified_date, $modified_description);
-    header("Location: event_view.php?event_id=$event_id&year=$year"); // Reload the page after modifying
+    $users_to_hide = $_POST['users_to_hide'] ?? [];
+    modifyEvent($event_id, $modified_name, $modified_date, $modified_description, $users_to_hide);
+    header("Location: event_view.php?event_id=$event_id&year=$year");
     exit();
   }
 }
-
 ?>
 
 <?php
 $page_title = "View Event";
 $page_styles = ["styles/groups.css"];
+include 'templates/select_dynamic.php';
 include 'templates/main_header.php';
 ?>
 
 <section class="content">
   <header>
-    <div>
-      <h1>View Event</h1>
-    </div>
-    <a class="btn" href="group_create.php?event_id=<?php echo $event_id?>&year=<?php echo $year ?>">Create Group</a>
+    <h1>View Event</h1>
   </header>
 
-  <!-- Event Info Section -->
-  <h2><?php echo $event['name']; ?> | <?php echo date('d F Y, l', $correct_date) ?>
-  <br><?php echo $event['description'];?></h2>
+  <h3><?php echo $event['name']; ?> | <?php echo date('d F Y, l', $correct_date) ?></h3>
+  <?php if ($event['creator_id']): ?>
+    Created by <a href="user.php?id=<?php echo $event['creator_id'] ?>"><?php echo $event['creator_username'] ?></a>
+  <?php endif ?>
 
-  <!-- Display Error Message if Not Admin -->
+  <p><?php echo $event['description'];?></p>
+
   <?php if (isset($error_message)): ?>
     <div style="color: red; font-weight: bold;"><?php echo $error_message; ?></div>
   <?php endif; ?>
 
-  <!-- Modify Event Form (Visible only when modifying and admin) -->
   <?php if ($viewer_admin): ?>
+    <button type="button" class="btn" id="modifyButton" onclick="toggleModifyForm()">Modify Event</button>
+
     <form method="POST" id="modifyForm" style="display:none;">
       <label for="event_name">Event Name:</label>
       <input type="text" name="event_name" id="event_name" value="<?php echo htmlspecialchars($event['name']); ?>" required>
@@ -75,38 +75,33 @@ include 'templates/main_header.php';
       <input type="date" name="event_date" id="event_date" value="<?php echo date('Y-m-d', strtotime($event['date'])); ?>" required>
       
       <label for="event_description">Event Description:</label>
-      <textarea name="event_description" id="event_description" required><?php echo htmlspecialchars($event['description']); ?></textarea>
-      
+      <textarea name="event_description" id="event_description"><?php echo htmlspecialchars($event['description']); ?></textarea>
+
+      <label >Hide from:
+        <?php select_dynamic('users_to_hide', 'api/users_select.php', $hidden_select) ?>
+      </label>
+
       <button type="submit" class="btn" name="modify_event">Save Changes</button>
       <button type="button" class="btn" onclick="toggleModifyForm()">Cancel</button>
     </form>
-
-    <button class="btn" id="modifyButton" onclick="toggleModifyForm()">Modify Event</button>
-  <?php else: ?>
-    <button class="btn" id="modifyButton" disabled>Modify Event (You are not the admin)</button>
   <?php endif; ?>
 
-  <!-- Delete Event Button -->
   <?php if ($viewer_admin): ?>
-    <button class="btn" id="deleteButton" onclick="confirmDelete()">Delete Event</button>
-  <?php else: ?>
-    <button class="btn" id="deleteButton" disabled>Delete Event (You are not the admin)</button>
-  <?php endif; ?><div id="deleteModal" style="display:none;">
-    <p>Are you sure you want to delete this event?</p>
-    <form method="POST">
-      <button type="submit" class="btn delete" name="delete_event">Yes, Delete</button>
-      <button type="button" class="btn" onclick="toggleDeleteModal()">Cancel</button>
-    </form>
-  </div>
+    <button type="button" class="btn delete" id="deleteButton" onclick="confirmDelete()">Delete Event</button>
 
-  <!-- Confirmation Modal for Deleting Event -->
-  <div id="deleteModal" style="display:none;">
-    <p>Are you sure you want to delete this event?</p>
-    <form method="POST">
-      <button type="submit" class="btn delete" name="delete_event">Yes, Delete</button>
-      <button type="button" class="btn" onclick="toggleDeleteModal()">Cancel</button>
-    </form>
-  </div>
+    <div id="deleteModal" style="display:none;">
+      <p>Are you sure you want to delete this event?</p>
+      <form method="POST">
+        <button type="submit" class="btn delete" name="delete_event">Yes, Delete</button>
+        <button type="button" class="btn" onclick="toggleDeleteModal()">Cancel</button>
+      </form>
+    </div>
+  <?php endif; ?>
+
+  <header>
+    <h2>Groups</h2>
+    <a class="btn" href="group_create.php?event_id=<?php echo $event_id?>&year=<?php echo $year ?>">Create Group</a>
+  </header>
 
   <?php if (!empty($groups)): ?>
     <ul class="group-list">
@@ -148,21 +143,18 @@ include 'templates/main_header.php';
 </section>
 
 <script>
-// Toggle the Modify Event form visibility
 function toggleModifyForm() {
-    const form = document.getElementById('modifyForm');
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  const form = document.getElementById('modifyForm');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
 
-// Show/Hide Delete Confirmation Modal
 function toggleDeleteModal() {
-    const modal = document.getElementById('deleteModal');
-    modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+  const modal = document.getElementById('deleteModal');
+  modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
 }
 
-// Confirm Delete Event
 function confirmDelete() {
-    toggleDeleteModal(); // Show confirmation dialog
+  toggleDeleteModal();
 }
 </script>
 
