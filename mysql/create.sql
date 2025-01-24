@@ -22,6 +22,9 @@ SET time_zone = "+00:00";
 -- Database: `eventsys`
 --
 
+DROP DATABASE IF EXISTS eventsys;
+CREATE DATABASE eventsys;
+
 -- --------------------------------------------------------
 
 --
