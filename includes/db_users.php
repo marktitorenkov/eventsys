@@ -33,6 +33,7 @@ function getUsers($viewer, $query, $limit, $offset) {
                         JOIN events e ON u.birthday_event = e.event_id
                         LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
                         WHERE u.username LIKE CONCAT('%', ?, '%')
+                        ORDER BY fu.favorite_user_id DESC, u.username
                         LIMIT ? OFFSET ?");
   $stmt->execute([$viewer, $query, $limit, $offset]);
 

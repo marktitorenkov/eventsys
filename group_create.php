@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $group_id = $result;
 
       attachGroupToEvent($group_id, $event_id, $year);
-      addUserToGroup($user_id, $group_id);
+      addUserInGroup($user_id, $group_id);
 
       header('Location: group_view.php?event_id=' . $event_id . '&group_id=' . $group_id . '&year=' . $year);
       exit;
@@ -70,19 +70,18 @@ include 'templates/main_header.php'
 
 <!-- attaching to event will show up in next years -->
 <section class="content">
-  <div class="two-items-apart">
-    <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>">Go back</a>
-  </div>
+  <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>"
+  >&lt Go back</a>
   <h1><?php echo $event['name']?> | <?php echo date('d F Y, l', $correct_date) ?></h1>
   <h2>Create Group</h2>
-  <section class="content group-center">
-    <form id="form-create-group" method="POST">
+  <section class="content group-form">
+    <form class="form-group" method="POST">
       <input type="text" name="group-name" placeholder="<?php echo $user['username']?>'s group">
       <input type="time" name="meeting-time" value="09:00:00">
       <input type="text" name="meeting-place" placeholder="Place">
       <input type="number" min="0" name="money-goal" placeholder="Money goal: 0">
-      <textarea form="form-create-group" type="text" name="group-description" placeholder="Description"></textarea>
-      <div class="form-checkbox-wrapper">
+      <textarea type="text" name="group-description" placeholder="Description"></textarea>
+      <div class="two-items">
         <input type="checkbox" id="is-private" name="is-private">
         <label for="is-private">make private</label>
       </div>

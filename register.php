@@ -34,19 +34,19 @@ include 'templates/main_header.php'
   <section class="content login">
     <h1>Register</h1>
     <form method="POST">
-      <label>Username <b>*</b>
+      <label>Username <b class="red">*</b>
         <input type="text" name="username" placeholder="Username" pattern="<?php echo $config['username_pattern'] ?>" required>
       </label>
-      <label>Birthdate <b>*</b>
+      <label>Birthdate <b class="red">*</b>
       <input type="date" name="birthdate" value="" required>
       </label>
       <label>Email
         <input type="email" name="email" placeholder="Email">
       </label>
-      <label>Password <b>*</b>
+      <label>Password <b class="red">*</b>
         <input type="password" name="password" placeholder="Password" required>
       </label>
-      <label>Confirm Password <b>*</b>
+      <label>Confirm Password <b class="red">*</b>
         <input type="password" name="confirm_password" placeholder="Confirm Password" required>
       </label>
       <button type="submit" class="btn">Register</button>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 18, 2025 at 03:50 PM
+-- Generation Time: Jan 19, 2025 at 11:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -50,10 +50,10 @@ INSERT INTO `events` (`event_id`, `creator_id`, `name`, `date`, `description`, `
 
 INSERT INTO `event_groups` (`group_id`, `creator_id`, `group_name`, `money_goal`, `meeting_time`, `meeting_place`, `group_description`, `group_pass`) VALUES
 (1, 2, 'radoslavs group', 0, '09:00:00', 'MEETING PALCE TO MEET', NULL, NULL),
-(2, 2, 'private test', 0, '09:00:00', NULL, NULL, 'dCvtDaJW'),
+(2, 2, 'private test', 0, '09:00:00', NULL, NULL, NULL),
 (3, 2, 'next years public group', 0, '09:00:00', NULL, NULL, NULL),
 (4, 2, 'some random thing', 0, '09:00:00', NULL, NULL, NULL),
-(5, 4, 'other group', 0, '09:00:00', NULL, NULL, NULL);
+(6, 2, 'radoslavs group', 0, '09:00:00', NULL, NULL, NULL);
 
 --
 -- Dumping data for table `event_to_group`
@@ -63,15 +63,24 @@ INSERT INTO `event_to_group` (`event_id`, `group_id`, `year`) VALUES
 (1, 1, 2025),
 (1, 2, 2025),
 (1, 3, 2026),
-(1, 5, 2025),
-(2, 4, 2025);
+(2, 4, 2025),
+(14, 6, 2026);
+
+--
+-- Dumping data for table `favorite_users`
+--
+
+INSERT INTO `favorite_users` (`user_id`, `favorite_user_id`) VALUES
+(2, 4),
+(2, 6),
+(2, 11);
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `birthday_event`, `password_hash`) VALUES
-(2, 'radoslav', NULL, 6, '$2y$10$wDUBuVFZn/pMeWo7SaiV/OehsJc66NFdHEbgRpRMSqsjgUoBOYohW'),
+(2, 'radoslav', 'radoslavbotov1@gmail.com', 6, '$2y$10$wDUBuVFZn/pMeWo7SaiV/OehsJc66NFdHEbgRpRMSqsjgUoBOYohW'),
 (4, 'mark', 'mark.titorenkov@outlook.com', 7, '$2y$10$EX82855JmY.wJNIIgvcemu/tLG6rSkfbV3wHiulNka8p.q7LuiGwC'),
 (6, 'petya', NULL, 9, '$2y$10$S6zkYQajUEh51bzqHUZmOumqU23cktVTSwwt13DVTjYlmjj7.djJO'),
 (7, 'messi', NULL, 10, '$2y$10$Fbgyav1H1Dy7zItBpWzoRuwzteR4XbwVwp9AxwPi0Ly8zDwm.EqSW'),
@@ -84,12 +93,25 @@ INSERT INTO `users` (`id`, `username`, `email`, `birthday_event`, `password_hash
 (14, 'KanyeWest', NULL, 17, '$2y$10$QMm.iiG5LPpgwvG56KWVy.tD6/3ThTnTDd/Z7.7o0.Nm0Fko5zr6m');
 
 --
+-- Dumping data for table `user_hidden_group`
+--
+
+INSERT INTO `user_hidden_group` (`user_id`, `group_id`) VALUES
+(8, 1),
+(11, 2);
+
+--
 -- Dumping data for table `user_in_group`
 --
 
 INSERT INTO `user_in_group` (`user_id`, `group_id`) VALUES
 (2, 1),
-(2, 2);
+(2, 2),
+(2, 6),
+(4, 1),
+(4, 2),
+(6, 1),
+(6, 2);
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 

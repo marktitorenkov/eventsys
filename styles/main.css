@@ -1,6 +1,7 @@
 :root {
   --color-accent: #333;
   --color-accent-active: #444;
+  --color-accent-inactive: #777;
   --color-background: #fff;
   --color-background-body: #eee;
   --color-text: #000;
@@ -100,6 +101,10 @@ textarea:focus-within {
   background-color: var(--color-text-error-active);
 }
 
+.btn.inactive {
+  background-color: var(--color-accent-inactive);
+}
+
 .btn.alt {
   color: var(--color-text);
   background-color: var(--color-background);
@@ -112,6 +117,14 @@ textarea:focus-within {
   background: unset;
   cursor: pointer;
   padding: 0;
+}
+
+.red {
+  color: var(--color-text-error);
+}
+
+.green {
+  color: var(--color-text-confirm);
 }
 
 p.error {

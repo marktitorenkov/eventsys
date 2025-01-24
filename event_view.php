@@ -9,7 +9,7 @@ $event_id = $_GET['event_id'];
 $year = $_GET['year'];
 $event = getEventById($event_id);
 $correct_date = strtotime(date('d M ', strtotime($event['date'])) . $year);
-$groups = getGroupsByEventIdYear($event_id, $year);
+$groups = getGroupsByEventIdYear($user['id'], $event_id, $year);
 
 // Check if the logged-in user is the admin of the event
 $viewer_admin = $event['creator_id'] == $user['id'];
@@ -91,13 +91,19 @@ include 'templates/main_header.php';
     <button class="btn" id="deleteButton" onclick="confirmDelete()">Delete Event</button>
   <?php else: ?>
     <button class="btn" id="deleteButton" disabled>Delete Event (You are not the admin)</button>
-  <?php endif; ?>
+  <?php endif; ?><div id="deleteModal" style="display:none;">
+    <p>Are you sure you want to delete this event?</p>
+    <form method="POST">
+      <button type="submit" class="btn delete" name="delete_event">Yes, Delete</button>
+      <button type="button" class="btn" onclick="toggleDeleteModal()">Cancel</button>
+    </form>
+  </div>
 
   <!-- Confirmation Modal for Deleting Event -->
   <div id="deleteModal" style="display:none;">
     <p>Are you sure you want to delete this event?</p>
     <form method="POST">
-      <button type="submit" class="btn" name="delete_event">Yes, Delete</button>
+      <button type="submit" class="btn delete" name="delete_event">Yes, Delete</button>
       <button type="button" class="btn" onclick="toggleDeleteModal()">Cancel</button>
     </form>
   </div>
@@ -108,7 +114,7 @@ include 'templates/main_header.php';
     foreach ($groups as $group):
     ?>
       <li>
-        <div class="two-items-apart">
+        <div class="two-items between">
           <h3>
           <?php
           if ($group['group_pass']) {
@@ -119,20 +125,20 @@ include 'templates/main_header.php';
           </h3>
           <p><a href="group_view.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group['group_id'] ?>&year=<?php echo $year ?>">View</a></p>
         </div>
-        <div class="two-items-apart">
+        <div class="two-items between">
           <p>Money goal: <?php echo $group['money_goal'] ?></p>
         </div>
-        <div class="two-items-apart">
+        <div class="two-items between">
           <p>Meeting time: <?php echo date('h:i:sa', strtotime($group['meeting_time'])) ?></p>
           <?php if ($group['meeting_place']): ?>
             <p>Meeting place: <?php echo $group['meeting_place'] ?></p>
           <?php endif ?>
         </div>
-        <div class="two-items-apart">
-        <?php if ($group['group_description']): ?>
+        <?php if($group['group_description']): ?>
+          <div class="two-items between">
           <p>Description: <?php echo $group['group_description'] ?></p>
-        <?php endif ?>
         </div>
+        <?php endif ?>
       </li>
     <?php endforeach ?>
     </ul>

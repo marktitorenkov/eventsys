@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 18, 2025 at 03:48 PM
+-- Generation Time: Jan 19, 2025 at 11:53 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -21,6 +21,9 @@ SET time_zone = "+00:00";
 --
 -- Database: `eventsys`
 --
+
+DROP DATABASE IF EXISTS eventsys;
+CREATE DATABASE eventsys;
 
 -- --------------------------------------------------------
 
@@ -99,6 +102,18 @@ CREATE TABLE `users` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `user_hidden_group`
+--
+
+DROP TABLE IF EXISTS `user_hidden_group`;
+CREATE TABLE `user_hidden_group` (
+  `user_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user_in_group`
 --
 
@@ -148,6 +163,14 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`),
   ADD KEY `birthday_event` (`birthday_event`);
+
+--
+-- Indexes for table `user_hidden_group`
+--
+ALTER TABLE `user_hidden_group`
+  ADD PRIMARY KEY (`user_id`,`group_id`),
+  ADD KEY `group_id` (`group_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `user_in_group`
@@ -214,6 +237,13 @@ ALTER TABLE `favorite_users`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`birthday_event`) REFERENCES `events` (`event_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_hidden_group`
+--
+ALTER TABLE `user_hidden_group`
+  ADD CONSTRAINT `user_hidden_group_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `user_hidden_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `event_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_in_group`
