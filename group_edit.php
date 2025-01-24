@@ -171,6 +171,7 @@ include 'templates/data_table.php';
     </form>
   </section>
 
+
   <!-- Panel for managing Group Members -->
   <section id="group-members-panel" class="content" style="display:none;">
   <?php

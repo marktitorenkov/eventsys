@@ -208,8 +208,9 @@ function getUsersInGroup($group_id, $limit = null, $offset = null, $include_hidd
   $query .= ') AS gr ON gr.user_id = u.id
             ORDER BY gr.user_status';
 
-  if ($limit && $offset) {
-    $query .= 'LIMIT ? OFFSET ?';
+  if (isset($limit) && isset($offset)) {
+    $query .= '
+    LIMIT ? OFFSET ?';
     $params[] = $limit;
     $params[] = $offset;
   }
