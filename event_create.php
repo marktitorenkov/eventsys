@@ -56,12 +56,12 @@ include 'templates/main_header.php'
   <section class="content create-event">
     <form method="POST">
       <label>
-        Name:
+        Name: <b class="red">*</b>
         <input type="text" name="name" placeholder="<?php echo $user['username']?>'s event" required>
       </label>
 
       <label>
-        Date:
+        Date: <b class="red">*</b>
         <input type="date" name="date" value="" required>
       </label>
 

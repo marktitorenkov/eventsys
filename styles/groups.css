@@ -50,6 +50,10 @@ ul.group-list li {
   text-decoration: underline;
 }
 
+.data-table.group_members .profile-picture {
+  width: 2.5em;
+}
+
 .data-table.group_edit .btn {
   max-width: 200px;
   margin: 4px;

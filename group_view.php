@@ -92,6 +92,7 @@ include 'templates/main_header.php'
     <h2><?php echo $group['group_name']; ?></h2>
   </header>
   <?php if ($in_group): ?>  <!-- User in group => can show content -->
+    <a href="group_members.php?event_id=<?php echo $event_id; ?>&group_id=<?php echo $group_id; ?>&year=<?php echo $year; ?>"><?php echo getUsersInGroupCount($group_id); ?> members</a>
     <header>
       <h2>...Chat...</h2>
     </header>
