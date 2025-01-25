@@ -242,10 +242,10 @@ function getUsersInGroupCount($group_id) {
 }
 
 function getUsersNotInGroup($group_id, $viewer, $query, $limit, $offset) {
-  // TODO: exclude users who cannot see Event, so that group admin can't add them to group
   $pdo = getPDO();
 
   // select users not in group and users group is not hidden from
+  // exclude users that cannot see event, which group is attached to
   $stmt = $pdo->prepare("SELECT u.id,
                                        u.username,
                                        u.email,
@@ -257,7 +257,8 @@ function getUsersNotInGroup($group_id, $viewer, $query, $limit, $offset) {
                                       SELECT *
                                       FROM user_hidden_group) as gr ON u.id = gr.user_id AND gr.group_id = ?
                             LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
-                        WHERE u.username LIKE CONCAT('%', ?, '%') AND gr.group_id IS NULL
+                            LEFT JOIN user_hidden_event uhe ON uhe.user_id = u.id
+                        WHERE u.username LIKE CONCAT('%', ?, '%') AND gr.group_id IS NULL AND uhe.user_id IS NULL
                         ORDER BY fu.favorite_user_id DESC, username
                         LIMIT ? OFFSET ?");
   $stmt->execute([$group_id, $viewer, $query, $limit, $offset]);
