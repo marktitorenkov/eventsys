@@ -23,14 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $error_messages[] = 'Description is too long, should be less than 250 characters.';
   }
 
-
+  $users_to_hide = $_POST['users_to_hide'] ?? [];
   if (empty($error_messages)) {
     $result = createEvent(
       $user['id'],
       $name,
       $date,
       $description,
-      $recurring
+      $recurring,
+      $users_to_hide
     );
 
     if (!empty($result)) {
@@ -45,30 +46,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php
 $page_title = "Create Event";
+include 'templates/select_dynamic.php';
 include 'templates/main_header.php'
 ?>
 
 
-<!-- attaching to event will show up in next years -->
 <section class="content">
   <h1>Create Event</h1>
   <section class="content create-event">
-    <form id="form-create-event" method="POST">
-      <input type="text" name="name" placeholder="<?php echo $user['username']?>'s event" required>
-      
-      <!-- Change input type to date -->
-      <input type="date" name="date" value="" required>
-      
-      <textarea form="form-create-event" type="text" name="description" placeholder="Description"></textarea>
-      
-      <div class="form-checkbox-wrapper">
-        <input type="checkbox" id="recurring" name="recurring">
-        <label for="recurring">Is Repeated</label>
-      </div>
-      
+    <form method="POST">
+      <label>
+        Name:
+        <input type="text" name="name" placeholder="<?php echo $user['username']?>'s event" required>
+      </label>
+
+      <label>
+        Date:
+        <input type="date" name="date" value="" required>
+      </label>
+
+      <label>
+        Description:
+        <textarea type="text" name="description" placeholder="Description"></textarea>
+      </label>
+
+      <label>
+        <input type="checkbox" name="recurring">
+        Is Repeated
+      </label>
+
+      <label >Hide from:
+        <?php select_dynamic('users_to_hide','api/users_select.php', []) ?>
+      </label>
       <button class="btn" type="submit">Create</button>
-      
-      <!-- Include form error template if exists -->
+
       <?php include 'templates/form_error.php'; ?>
     </form>
   </section>

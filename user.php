@@ -12,7 +12,7 @@ if (!isset($_GET['id'])) {
 }
 
 $profile = getUserById($_GET['id']);
-$events = getEventsByOwner($profile['id']);
+$events = getEventsByOwner($user['id'], $profile['id']);
 ?>
 
 <?php
