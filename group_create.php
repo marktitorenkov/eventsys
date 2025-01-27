@@ -16,10 +16,10 @@ $correct_date = strtotime(date('d M ', strtotime($event['date'])).$year);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $group_name = $_POST['group-name'];
-  $meeting_time = $_POST['meeting-time'];
-  $meeting_place = $_POST['meeting-place'];
-  $money_goal = $_POST['money-goal'];
-  $group_description = $_POST['group-description'] ?? null;
+  $meeting_time = $_POST['meeting-time'] ?: null;
+  $meeting_place = $_POST['meeting-place'] ?: null;
+  $money_goal = $_POST['money-goal'] ?: 0;
+  $group_description = $_POST['group-description'] ?: null;
   $is_private = $_POST['is-private'] ?? false;
 
   $error_messages = array();

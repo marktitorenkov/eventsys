@@ -72,7 +72,7 @@ include 'templates/main_header.php';
     <?php endif; ?>
   </header>
 
-  <p><?php echo htmlspecialchars($event['description']);?></p>
+  <p><?php echo htmlspecialchars($event['description'] ?? '');?></p>
 
   <?php if (isset($error_message)): ?>
     <div style="color: red; font-weight: bold;"><?php echo $error_message; ?></div>
@@ -87,7 +87,7 @@ include 'templates/main_header.php';
       <input type="date" name="event_date" id="event_date" value="<?php echo date('Y-m-d', strtotime($event['date'])); ?>" required>
       
       <label for="event_description">Event Description:</label>
-      <textarea name="event_description" id="event_description"><?php echo htmlspecialchars($event['description']); ?></textarea>
+      <textarea name="event_description" id="event_description"><?php echo htmlspecialchars($event['description'] ?? ''); ?></textarea>
 
       <label >Hide from:
         <?php select_dynamic('users_to_hide', 'api/users_select.php', $hidden_select) ?>
@@ -123,7 +123,7 @@ include 'templates/main_header.php';
           if ($group['group_pass']) {
             echo '🔒 ';
           }
-          echo $group['group_name']
+          echo htmlspecialchars($group['group_name'])
           ?>
           </h3>
           <p><a href="group_view.php?group_id=<?php echo $group['group_id'] ?>">View</a></p>
@@ -134,12 +134,12 @@ include 'templates/main_header.php';
         <div class="two-items between">
           <p>Meeting time: <?php echo date('h:i:sa', strtotime($group['meeting_time'])) ?></p>
           <?php if ($group['meeting_place']): ?>
-            <p>Meeting place: <?php echo $group['meeting_place'] ?></p>
+            <p>Meeting place: <?php echo htmlspecialchars($group['meeting_place'] ?? '') ?></p>
           <?php endif ?>
         </div>
         <?php if($group['group_description']): ?>
           <div class="two-items between">
-          <p>Description: <?php echo $group['group_description'] ?></p>
+          <p>Description: <?php echo htmlspecialchars($group['group_description'] ?? '') ?></p>
         </div>
         <?php endif ?>
       </li>
