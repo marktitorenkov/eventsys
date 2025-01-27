@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $error_messages[] = 'Invalid username or password!';
   } else {
     $_SESSION['user_id'] = $userId;
-    header('Location: login.php');
+    header('Location: ./');
     exit;
   }
 }

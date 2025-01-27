@@ -8,6 +8,10 @@ ensureLoggedIn();
 $event_id = $_GET['event_id'];
 $year = $_GET['year'];
 $event = getEventById($event_id);
+if (!$event || !$year) {
+  header("Location: ./");
+  exit;
+}
 $correct_date = strtotime(date('d M ', strtotime($event['date'])).$year);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -53,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       attachGroupToEvent($group_id, $event_id, $year);
       addUserInGroup($user_id, $group_id);
 
-      header('Location: group_view.php?event_id=' . $event_id . '&group_id=' . $group_id . '&year=' . $year);
+      header("Location: group_view.php?group_id=$group_id");
       exit;
     }
   }
@@ -72,7 +76,7 @@ include 'templates/main_header.php'
 <section class="content">
   <a class="btn" href="event_view.php?event_id=<?php echo $event_id ?>&year=<?php echo $year ?>"
   >&lt Go back</a>
-  <h1><?php echo $event['name']?> | <?php echo date('d F Y, l', $correct_date) ?></h1>
+  <h1><?php echo htmlspecialchars($event['name']) ?> | <?php echo date('d F Y, l', $correct_date) ?></h1>
   <h2>Create Group</h2>
   <section class="content group-form">
     <form class="form-group" method="POST">

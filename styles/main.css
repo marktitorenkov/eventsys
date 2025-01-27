@@ -6,10 +6,11 @@
   --color-background-body: #eee;
   --color-text: #000;
   --color-text-accent: #fff;
-  --color-text-error: #f00;
-  --color-text-error-active: #e60000;
-  --color-text-confirm: #0f0;
-  --color-text-confirm-active: #00e600;
+  --color-text-error: #dc3545;
+  --color-text-error-active: #c82333;
+  --color-text-confirm: #28a745;
+  --color-text-confirm-active: #218838;
+  --color-chat-bubble: #1f8aff;
   --nav-height: 3.5em;
 }
 
@@ -85,6 +86,7 @@ label {
   background-color: var(--color-accent);
   text-align: center;
   align-content: center;
+  white-space: nowrap;
 }
 
 .btn:hover {
@@ -214,10 +216,11 @@ body > nav .profile-picture {
   height: 70%;
 }
 
-header {
+header.space-betwen {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1em
 }
 
 .content {
@@ -319,6 +322,10 @@ ul.event-list li {
 
 ul.date-list.hide .hidden {
   display: none;
+}
+
+ul.user-owned li {
+  margin: 1em 0;
 }
 
 /* Large screens only */

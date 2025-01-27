@@ -4,70 +4,60 @@ require_once 'includes/db_groups.php';
 
 ensureLoggedIn();
 
-$event_id = $_GET['event_id'];
 $group_id = $_GET['group_id'];
 $query = '';
+
 $group = getGroupById($group_id);
+if (!$group) {
+  header('Location: ./');
+  exit;
+}
+
+$event_id = $group['event_id'];
+$year = $group['year'];
 
 // check if User is a member of the group
 if (!checkUserInGroup($user['id'], $event_id, $group_id)) {
-  header('Location: group_view.php?event_id=' . $event_id . '&group_id=' . $group_id . '&year=' . $_GET['year']);
+  header('Location: group_view.php?group_id='.$group_id);
   exit;
 }
 
 // check if User is creator of group and has editing privileges
 if ($user['id'] != $group['creator_id']) {
-  header('Location: group_view.php?event_id=' . $event_id . '&group_id=' . $group_id . '&year=' . $_GET['year']);
+  header('Location: group_view.php?group_id='.$group_id);
   exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['update-group'])) { // Update Group Information
-    $group_name = $_POST['group-name'];
-    $meeting_time = $_POST['meeting-time'];
-    $meeting_place = $_POST['meeting-place'];
-    $money_goal = $_POST['money-goal'];
-    $group_description = $_POST['group-description'];
-    $is_private = $_POST['is-private'];
-
     updateGroup(
       $group_id,
       $user['id'],
-      $group_name,
-      $money_goal,
-      $meeting_time,
-      $meeting_place,
-      $group_description,
+      $_POST['group-name'],
+      $_POST['money-goal'],
+      $_POST['meeting-time'],
+      $_POST['meeting-place'],
+      $_POST['group-description'],
       $group['group_pass'],
-      $is_private
+      $_POST['is-private']
     );
 
-    header('Refresh:0');
+    header('Location: group_view.php?group_id='.$group_id);
     exit;
   }
 
   if (isset($_POST['delete-group'])) { // Delete Group
     deleteGroup($group_id, $user['id']);
 
-    header('Location: event_view.php?event_id=' . $event_id . '&year=' . $_GET['year']);
+    header("Location: event_view.php?event_id=$event_id&year=$year");
     exit;
   }
 
   if (isset($_POST['transfer-group-ownership'])) { // Transfer Ownership of Group
     $new_owner = $_POST['user_id'];
+    changeGroupOwner($group_id, $new_owner);
 
-    updateGroup(
-      $group_id,
-      $new_owner,
-      $group['group_name'],
-      $group['money_goal'],
-      $group['meeting_time'],
-      $group['meeting_place'],
-      $group['group_description'],
-      $group['group_pass']
-    );
-
-    header('Refresh:0');
+    header('Location: '.$_SERVER['REQUEST_URI']);
     exit;
   }
 
@@ -77,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     removeUserFromGroup($member_id, $group_id);
     hideGroupFromUser($member_id, $group_id);
 
-    header('Refresh:0');
+    header('Location: '.$_SERVER['REQUEST_URI']);
     exit;
   }
 
@@ -87,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     showGroupToUser($member_id, $group_id);
     addUserInGroup($member_id, $group_id);
 
-    header('Refresh:0');
+    header('Location: '.$_SERVER['REQUEST_URI']);
     exit;
   }
 
@@ -97,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     removeUserFromGroup($member_id, $group_id);
     showGroupToUser($member_id, $group_id);
 
-    header('Refresh:0');
+    header('Location: '.$_SERVER['REQUEST_URI']);
     exit;
   }
 
@@ -106,45 +96,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     addUserInGroup($new_member_id, $group_id);
 
-    header('Refresh:0');
+    header('Location: '.$_SERVER['REQUEST_URI']);
     exit;
-  }
-
-  if (isset($_POST['query-user-filter'])) { // Get query for filtering users
-    $query = $_POST['q'];
   }
 
   if (isset($_POST['favorite'])) { // Set User as Favorite
     userFavorite($user['id'], $_POST['user_id'], $_POST['favorite']);
+    header('Location: '.$_SERVER['REQUEST_URI']);
   }
 }
+
+$query = $_GET['q'] ?? ""
 ?>
 
 
 <?php
 $page_title = 'Group Settings';
 $page_styles = ['styles/groups.css'];
-$page_scripts = ['javascript/group_edit.js'];
+$page_scripts = ['javascript/tabs.js', 'javascript/group_edit.js'];
+include 'templates/user_favorite.php';
 include 'templates/main_header.php';
 include 'templates/data_table.php';
 ?>
 
 <section class="content">
-  <header>
-    <a class="btn" href="group_view.php?event_id=<?php echo $event_id ?>&group_id=<?php echo $group_id ?>&year=<?php echo $_GET['year'] ?>"
-    >&lt Go back</a>
+  <header class="space-betwen">
+    <a class="btn" href="group_view.php?group_id=<?php echo $group_id ?>">
+      &lt; Go back
+    </a>
     <h1><?php echo $group['group_name'] ?></h1>
   </header>
   
   <!-- Buttons that switch between Panels -->
   <div class="two-items">
-    <button id="btn-toggle-edit" class="btn" onclick="changeToEditGroupPanel()">Edit Group</button>
-    <button id="btn-toggle-members" class="btn inactive" onclick="changeToGroupMembersPanel()">Group Members</button>
-    <button id="btn-toggle-add" class="btn inactive" onclick="changeToAddMembersPanel()">Add Members</button>
+    <button id="group-edit-toggle" class="btn">Edit Group</button>
+    <button id="group-members-toggle" class="btn inactive">Group Members</button>
+    <button id="group-add-toggle" class="btn inactive">Add Members</button>
   </div>
 
   <!-- Panel for Editing Group Information / Delete Group -->
-  <section id="group-edit-panel" class="content group-form">
+  <section id="group-edit-panel" class="content group-form" style="display:none;">
     <form method="POST">
       <label for="group-name">Group name:</label>
       <input type="text" id="group-name" name="group-name" maxlength="50" value="<?php echo $group['group_name'] ?>">
@@ -228,11 +219,12 @@ include 'templates/data_table.php';
 
 <!-- Panel for Adding new Group Members / Hiding Group from Users -->
 <section id="group-add-panel" class="content" style="display:none;">
-  <header>
+  <header class="space-betwen">
     <h2>Add Users To Group</h2>
-    <form class="form-filter" method="POST" >
+    <form class="form-filter" method="GET" >
+      <input type="hidden" name="group_id" value="<?php echo $group_id ?>">
       <input type="text" name="q" value="<?php echo $query ?>" placeholder="Search user...">
-      <button type="submit" name="query-user-filter" class="btn alt">🔍</button>
+      <button type="submit" class="btn alt">🔍</button>
     </form>
   </header>
   <?php
@@ -263,14 +255,8 @@ include 'templates/data_table.php';
     <?php
       },
       'Favorite' => function ($row) {
-        global $user; ?>
-    <form method="POST">
-      <input type="hidden" name="user_id" value="<?php echo $row['id'] ?>">
-      <input type="hidden" name="favorite" value="<?php echo !($row['favorite']) ?>">
-      <?php if ($user['id'] !== $row['id']): ?>
-        <button type="submit" class="btn-favorite"><?php echo $row['favorite'] ? '★' : '☆' ?></button>
-      <?php endif ?>
-    </form><?php
+        global $user; 
+        favorite_user_form($row['id'], $row['favorite'], $user['id'] !== $row['id']);
       },
     ],
     ['30%', '60%', '10%']

@@ -11,7 +11,7 @@ function getUserId() {
   
   if (!$user) {
     startSession();
-    $user = getUserById($_SESSION['user_id'] ?? null);
+    $user = getUserById(null, $_SESSION['user_id'] ?? null);
     if (!$user) {
       return null;
     }
