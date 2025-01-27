@@ -85,7 +85,7 @@ include 'templates/main_header.php'
       </li>
     </ul>
 
-    <p><?php echo htmlspecialchars($group['group_description']) ?></p>
+    <p><?php echo htmlspecialchars($group['group_description'] ?? '') ?></p>
 
     <ul class="group-tabs">
       <li id="chat-toggle">Chat</li>

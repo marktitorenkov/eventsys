@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $name = $_POST['name'];
   $date=$_POST['date'];
   $description = $_POST['description'];
-  $recurring = isset($_POST['recurring']) ? true : false;
+  $recurring = isset($_POST['recurring']) && $_POST['recurring'];
 
   $error_messages = array();
 

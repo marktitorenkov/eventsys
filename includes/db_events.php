@@ -80,7 +80,7 @@ function createEvent($creator, $name, $date, $description, $recurring, $users_to
 
   $stmt = $pdo->prepare('INSERT INTO events (creator_id, name, date, description, recurring)
                          VALUES (?,?,?,?,?)');
-  $stmt->execute([$creator, $name, $date, $description, $recurring]);
+  $stmt->execute([$creator, $name, $date, $description, intval($recurring)]);
   $event_id = $pdo->lastInsertId();
 
   _updateHiddenUsers($pdo, $event_id, $users_to_hide);

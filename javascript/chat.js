@@ -13,7 +13,9 @@ function chatInit(formEl, historyEl) {
   async function fetchMessages() {
     const formData = new FormData(formEl)
     formData.delete(CONTENT_KEY)
-    formData.append(TIME_KEY, last?.message.time || null)
+    if (last?.message.time) {
+      formData.append(TIME_KEY, last?.message.time)
+    }
     const url = formEl.action+'?'+(new URLSearchParams(formData).toString())
 
     const lastBefore = last?.message;
