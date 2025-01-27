@@ -49,12 +49,12 @@ include 'templates/main_header.php'
 ?>
 
 <section class="content">
-  <header>
+  <header class="space-betwen">
     <h1>Events</h1>
     <a class="btn" href="event_create.php">Create Event</a>
   </header>
   <?php if (anyFavorite($events)): ?>
-    <header>
+    <header class="space-betwen">
       <button type="button" class="btn" id="toggle_expand">&nbsp;</button>
     </header>
   <?php endif ?>
@@ -84,7 +84,7 @@ include 'templates/main_header.php'
         <?php foreach ($date_events as $event): ?>
           <li class="event-item <?php echo $event['favorite'] ? "" : "hidden" ?>">
             <span>
-              <?php echo $event['name'] ?>
+              <?php echo htmlspecialchars($event['name']) ?>
               <?php if ($event['creator_id']): ?>
                 <span> • <a href="user.php?id=<?php echo $event['creator_id'] ?>"><?php echo $event['creator_username'] ?></a></span>
               <?php endif ?>

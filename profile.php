@@ -8,7 +8,7 @@ ensureLoggedIn();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   updateUser($user['id'], $_POST['username'], $_POST['email'], $_POST['birthdate']);
 
-  header('Refresh: 0');
+  header('Location: '.$_SERVER['REQUEST_URI']);
   exit;
 }
 ?>

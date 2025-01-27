@@ -73,3 +73,161 @@ ul.group-list li {
 #input-group-pass {
   max-width: 150px;
 }
+
+ul.group-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1em;
+}
+
+ul.group-tabs li {
+  padding: 1em;
+  flex: 1 1 auto;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 1em 1em 0 0;
+  cursor: pointer;
+}
+
+ul.group-tabs li.active {
+  border-bottom: none;
+  font-weight: bold;
+}
+
+ul.group-tabs li:not(.active) {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.chat {
+  padding: 1em;
+}
+
+.chat-history {
+  height: 30em;
+  overflow-y: auto;
+}
+
+.message-series {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin: 1em 0;
+}
+
+.message-series .message {
+  max-width: 80%;
+  padding: 1em;
+  margin: 0.1em 0;
+  border-radius: 1em;
+  color: var(--color-text);
+  background-color: var(--color-background-body);
+}
+
+.message-series.owner {
+  align-items: end;
+}
+
+.message-series.owner .message {
+  color: var(--color-text-accent);
+  background-color: var(--color-chat-bubble);
+}
+
+.message-series .sender-name {
+  color: #888;
+  margin: 0 1em;
+}
+
+.messages-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #888;
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.5em;
+}
+
+.chat-form textarea {
+  resize: none;
+  flex: 1 1 auto;
+  margin: 1em 0;
+}
+
+.chat-form button {
+  width: 3em;
+  height: 3em;
+  margin: 2em 0;
+  color: var(--color-text-accent);
+  background-color: var(--color-chat-bubble);
+  border: none;
+  border-radius: 50%;
+}
+
+.polls {
+  padding: 1em;
+  display: flex;
+}
+
+.polls-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  background-color: var(--color-background-body);
+  padding: 1em
+}
+
+.poll-form {
+  background: var(--color-background);
+  padding: 1em 2em;
+}
+
+.poll-form.create {
+  margin-top: 2em;
+}
+
+.poll-form label {
+  display: flex;
+  flex-direction: column;
+  margin: 1em 0;
+}
+
+.poll-form .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.poll-form .row input[type=checkbox] {
+  margin: 0 1em 0 0;
+}
+
+.poll-form meter,
+.poll-form input[type=text] {
+  flex: 1 1 auto;
+}
+
+.poll-form meter::-webkit-meter-optimum-value {
+  background: var(--color-chat-bubble);
+}
+
+.poll-form input[type=text] {
+  margin: 0;
+  padding: 0.5em;
+  border: none;
+  border-bottom: 1px solid;
+  border-radius: 0;
+}
+
+.poll-form .btn {
+  width: 100%;
+}
+
+.poll-form .add-option {
+  border: none;
+  padding: 0.5em 1em;
+}

@@ -5,13 +5,19 @@ require_once 'includes/db_groups.php';
 
 ensureLoggedIn();
 
-$year = $_GET['year'];
-$user_id = $user['id'];
 $group_id = $_GET['group_id'];
-$event_id = $_GET['event_id'];
+$group = getGroupById($group_id);
+if (!$group) {
+  header("Location: ./");
+  exit;
+}
+
+$user_id = $user['id'];
+$event_id = $group['event_id'];
+$year = $group['year'];
 
 if (checkGroupHiddenFromUser($user_id, $event_id, $group_id)) {
-  header('Location: event_view.php?event_id=' . $event_id . '&year=' . $_GET['year']);
+  header("Location: event_view.php?event_id=$event_id&year=$year");
   exit;
 }
 
@@ -28,7 +34,7 @@ include 'templates/data_table.php';
 ?>
 
 <section class="content">
-  <a class="btn" href="group_view.php?event_id=<?php echo $event_id; ?>&group_id=<?php echo $group_id; ?>&year=<?php echo $year; ?>">&lt Go back</a>
+  <a class="btn" href="group_view.php?group_id=<?php echo $group_id; ?>">&lt Go back</a>
   <?php
   data_table(
     function ($limit, $offset) {

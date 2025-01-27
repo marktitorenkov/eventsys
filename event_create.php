@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($result)) {
       $event_id= $result;
 
-      header('Location: event_view.php?event_id=' . $event_id . '&year=' . date('Y', strtotime(($date))));
+      header("Location: event_view.php?event_id=$event_id&year=".date('Y', strtotime(($date))));
       exit;
     }
   }

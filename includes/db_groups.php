@@ -6,12 +6,28 @@ require_once 'db.php';
 function getGroupById($group_id) {
   $pdo = getPDO();
   
-  $stmt = $pdo->prepare('SELECT *
-                        FROM event_groups
-                        WHERE group_id = ?');
+  $stmt = $pdo->prepare('SELECT g.*, eg.event_id, eg.year
+                        FROM `event_groups` g
+                        JOIN `event_to_group` eg ON g.group_id = eg.group_id
+                        WHERE g.group_id = ?');
   $stmt->execute([$group_id]);
   
   return $stmt->fetch();
+}
+
+function getGroupsByOwner($viewer, $creator) {
+  $pdo = getPDO();
+
+  $stmt = $pdo->prepare('SELECT g.*,
+                                e.name AS event_name
+                         FROM `event_groups` g
+                         JOIN `event_to_group` eg ON g.group_id = eg.group_id
+                         JOIN `events` e ON eg.event_id = e.event_id
+                         LEFT JOIN user_hidden_group gh ON g.group_id = gh.group_id AND gh.user_id = ?
+                         WHERE g.creator_id = ? AND gh.user_id IS NULL');
+  $stmt->execute([$viewer, $creator]);
+
+  return $stmt->fetchAll();
 }
 
 function getGroupsByEventIdYear($user_id, $event_id, $year) {
@@ -68,8 +84,8 @@ function createGroup($creator_id, $group_name, $money_goal, $time, $place, $desc
   return $pdo->lastInsertId();
 }
 
-function deleteGroup($group_id, $user_id) {
-  $pdo = getPDO();
+function deleteGroup($group_id, $user_id, $pdo = null) {
+  $pdo = $pdo ?? getPDO();
 
   $stmt = $pdo->prepare('DELETE FROM event_groups
                         WHERE group_id = ? AND creator_id = ?');
@@ -127,8 +143,40 @@ function addUserInGroup($user_id, $group_id) {
   }
 }
 
-function removeUserFromGroup($user_id, $group_id) {
+function leaveGroup($user_id, $group_id) {
+  $exists = true;
+
   $pdo = getPDO();
+  $pdo->beginTransaction();
+
+  removeUserFromGroup($user_id, $group_id, $pdo);
+
+  // get all users in group, excluding hidden
+  $users_in_group = getUsersInGroup($group_id, null, null, null, $pdo);
+  if (count($users_in_group) > 0) {
+    // chose a random user for new admin
+    $new_admin = $users_in_group[array_rand($users_in_group)]['user_id'];
+    changeGroupOwner($group_id, $new_admin, $pdo);
+  } else { // otherwise, delete group
+    deleteGroup($group_id, $user_id, $pdo);
+    $exists = false;
+  }
+
+  $pdo->commit();
+
+  return $exists;
+}
+
+function changeGroupOwner($group_id, $new_admin, $pdo = null) {
+  $pdo = $pdo ?? getPDO();
+  $stmt = $pdo->prepare('UPDATE event_groups
+                         SET creator_id = ?
+                         WHERE group_id = ?');
+  $stmt->execute([$new_admin, $group_id]);
+}
+
+function removeUserFromGroup($user_id, $group_id, $pdo = null) {
+  $pdo = $pdo ?? getPDO();
 
   $stmt = $pdo->prepare('DELETE FROM user_in_group
                         WHERE user_id = ? AND group_id = ?');
@@ -160,19 +208,17 @@ function showGroupToUser($user_id, $group_id) {
   $stmt->execute([$user_id, $group_id]);
 }
 
-function updateGroup($group_id, $creator_id, $group_name, $money_goal, $time, $place, $description, $group_pass, $is_private = null) {
+function updateGroup($group_id, $creator_id, $group_name, $money_goal, $time, $place, $description, $group_pass, $is_private) {
   $pdo = getPDO();
 
   $meeting_time = date('G:i:s', strtotime($time));
   $meeting_place = empty($place) ? null : $place;
   $group_description = empty($description) ? null : $description;
-  if (!$is_private) {
-    if (!$group_pass && $is_private) { // group is public and request to make pilate
-      $group_pass = generateRandomString();
-    } elseif ($group_pass && !$is_private) { // group is private and request to make public
-      $group_pass = null;
-    } // other 2 cases, we keep group_pass as is
-  }
+  if (!$group_pass && $is_private) { // group is public and request to make private
+    $group_pass = generateRandomString();
+  } elseif ($group_pass && !$is_private) { // group is private and request to make public
+    $group_pass = null;
+  } // other 2 cases, we keep group_pass as is
 
   $stmt = $pdo->prepare('UPDATE event_groups
                         SET creator_id = ?, group_name = ?, money_goal = ?, meeting_time = ?, meeting_place = ?, group_description = ?, group_pass = ?
@@ -180,8 +226,8 @@ function updateGroup($group_id, $creator_id, $group_name, $money_goal, $time, $p
   $stmt->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass, $group_id]);
 }
 
-function getUsersInGroup($group_id, $limit = null, $offset = null, $include_hidden = false) {
-  $pdo = getPDO();
+function getUsersInGroup($group_id, $limit = null, $offset = null, $include_hidden = false, $pdo = null) {
+  $pdo = $pdo ?? getPDO();
   
   // Inner Table: 'Users In Group' Union 'Users Hidden From Group'
   // Outer Table: adds username and email to result from Inner Table

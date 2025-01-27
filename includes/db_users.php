@@ -2,7 +2,7 @@
 
 // Queries
 
-function getUserById($user_id) {
+function getUserById($viewer, $user_id) {
   if ($user_id === null)
   return null;
   
@@ -10,11 +10,13 @@ function getUserById($user_id) {
   $stmt = $pdo->prepare('SELECT u.id,
                                 u.username,
                                 u.email,
-                                e.date AS birthdate
+                                e.date AS birthdate,
+                                fu.favorite_user_id IS NOT NULL as favorite
                         FROM users u
                         JOIN events e ON u.birthday_event = e.event_id
+                        LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
                         WHERE u.id = ?');
-  $stmt->execute([$user_id]);
+  $stmt->execute([$viewer, $user_id]);
   
   $user = $stmt->fetch();
   
