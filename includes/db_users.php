@@ -10,6 +10,7 @@ function getUserById($viewer, $user_id) {
   $stmt = $pdo->prepare('SELECT u.id,
                                 u.username,
                                 u.email,
+                                u.birthday_event,
                                 e.date AS birthdate,
                                 fu.favorite_user_id IS NOT NULL as favorite
                         FROM users u
