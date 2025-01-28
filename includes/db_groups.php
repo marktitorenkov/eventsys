@@ -15,17 +15,20 @@ function getGroupById($group_id) {
   return $stmt->fetch();
 }
 
-function getGroupsByOwner($viewer, $creator) {
+function getJoinedGroups($viewer, $user) {
   $pdo = getPDO();
 
   $stmt = $pdo->prepare('SELECT g.*,
                                 e.name AS event_name
-                         FROM `event_groups` g
-                         JOIN `event_to_group` eg ON g.group_id = eg.group_id
-                         JOIN `events` e ON eg.event_id = e.event_id
-                         LEFT JOIN user_hidden_group gh ON g.group_id = gh.group_id AND gh.user_id = ?
-                         WHERE g.creator_id = ? AND gh.user_id IS NULL');
-  $stmt->execute([$viewer, $creator]);
+                        FROM `event_groups` g
+                        JOIN `event_to_group` eg ON g.group_id = eg.group_id
+                        JOIN `events` e ON eg.event_id = e.event_id
+                        JOIN `user_in_group` ug ON g.group_id = ug.group_id AND ug.user_id = ? -- user
+                        LEFT JOIN `users` u ON u.birthday_event = e.event_id AND u.id = ? -- viewer
+                        LEFT JOIN `user_hidden_event` uhe ON e.event_id = uhe.event_id AND uhe.user_id = ? -- viewer
+                        LEFT JOIN `user_hidden_group` uhg ON g.group_id = uhg.group_id AND uhg.user_id = ? -- viewer
+                        WHERE u.id IS NULL AND uhe.user_id IS NULL AND uhg.user_id IS NULL');
+  $stmt->execute([$user, $viewer, $viewer, $viewer]);
 
   return $stmt->fetchAll();
 }
