@@ -1,14 +1,19 @@
 <?php
 $table_number = 1;
 
+function page_param($table_number) {
+  return $table_number == 1 ? 'p' : 'p'.$table_number;
+}
+
 function page_url($page, $table) {
+  global $table_number;
+
   $parsedUrl = parse_url($_SERVER['REQUEST_URI']);
 
   $queryParams = [];
   parse_str($parsedUrl['query'] ?? '', $queryParams);
 
-  $queryParams['p'] = $page;
-  $queryParams['t'] = $table;
+  $queryParams[page_param($table_number)] = $page;
 
   return $parsedUrl['path'] . '?' . http_build_query($queryParams);
 }
@@ -16,21 +21,12 @@ function page_url($page, $table) {
 function data_table($get_records, $get_records_count, $pageSize, $columns, $columns_widths = null) {
   global $table_number;
 
-  $page = max($_GET['p'] ?? 1, 1);
-  $table = max($_GET['t'] ?? 0, 0);
+  $count = $get_records_count();
+  $totalPages = ceil($count / $pageSize);
 
-  if ($table == 0) { // no 'p' or 't' queries in url yet
-    $_SESSION['table_' . $table_number] = 1; // default last page for table is 1
-  } else { // url has request for table offset
-    if ($table_number != $table) { // if table shouldn't be offset, get last known table page
-      $page = $_SESSION['table_' . $table_number];
-    } else { // if table SHOULD be offset, update last known table page
-      $_SESSION['table_' . $table_number] = $page;
-    }
-  }
+  $page = min(max($_GET[page_param($table_number)] ?? 1, 1), $totalPages);
 
   $records = $get_records($pageSize, ($page - 1) * $pageSize); // (limit, offset * should_apply_offset)
-  $totalPages = ceil($get_records_count() / $pageSize);
   $baseUrl = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
   $render_default = function($row, $key) { echo $key ? $row[$key] : ""; };
   $additional_class = basename($_SERVER['SCRIPT_NAME'], ".php");

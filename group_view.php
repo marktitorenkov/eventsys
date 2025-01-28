@@ -81,7 +81,7 @@ include 'templates/main_header.php'
       <li><b>⏰ Time:</b> <?php echo htmlspecialchars($group['meeting_time'] ?? 'Not set') ?></li>
       <li>
         <?php echo ($is_private ? "🔒 Private" : "🌐 Public")." Group" ?> |
-        <a href="group_members.php?group_id=<?php echo $group_id; ?>"><?php echo getUsersInGroupCount($group_id); ?> members</a>
+        <a href="group_members.php?group_id=<?php echo $group_id; ?>"><?php echo getMemberCount($group_id); ?> member(s)</a>
       </li>
     </ul>
 

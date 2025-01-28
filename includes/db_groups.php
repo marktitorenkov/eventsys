@@ -15,6 +15,17 @@ function getGroupById($group_id) {
   return $stmt->fetch();
 }
 
+function getMemberCount($group_id) {
+  $pdo = getPDO();
+  
+  $stmt = $pdo->prepare('SELECT COUNT(1)
+                        FROM `user_in_group` g
+                        WHERE g.group_id = ?');
+  $stmt->execute([$group_id]);
+  
+  return $stmt->fetch()['COUNT(1)'];
+}
+
 function getJoinedGroups($viewer, $user) {
   $pdo = getPDO();
 
@@ -39,16 +50,19 @@ function getGroupsByEventIdYear($user_id, $event_id, $year) {
   // get groups for given Event and Year
   // exclude groups that are hidden for given User
   $stmt = $pdo->prepare('SELECT g.group_id,
-                                      group_name,
-                                      money_goal,
-                                      meeting_time,
-                                      meeting_place,
-                                      group_description,
-                                      group_pass
-                                FROM event_to_group AS eg
-                                JOIN event_groups g ON eg.group_id = g.group_id
-                                    LEFT JOIN user_hidden_group uhg ON eg.group_id = uhg.group_id AND uhg.user_id = ?
-                                WHERE event_id = ? AND year = ? AND uhg.user_id IS NULL');
+                                g.group_name,
+                                g.money_goal,
+                                g.meeting_time,
+                                g.meeting_place,
+                                g.group_description,
+                                g.group_pass,
+                                g.creator_id,
+                                u.id AS creator_name
+                          FROM event_to_group AS eg
+                          JOIN event_groups g ON eg.group_id = g.group_id
+                          JOIN users u ON g.creator_id = u.id
+                          LEFT JOIN user_hidden_group uhg ON eg.group_id = uhg.group_id AND uhg.user_id = ?
+                          WHERE event_id = ? AND year = ? AND uhg.user_id IS NULL');
   $stmt->execute([$user_id, $event_id, $year]);
   
   return $stmt->fetchAll();
@@ -155,7 +169,7 @@ function leaveGroup($user_id, $group_id) {
   removeUserFromGroup($user_id, $group_id, $pdo);
 
   // get all users in group, excluding hidden
-  $users_in_group = getUsersInGroup($group_id, null, null, null, $pdo);
+  $users_in_group = getUsersInGroup($group_id, false, null, null, $pdo);
   if (count($users_in_group) > 0) {
     // chose a random user for new admin
     $new_admin = $users_in_group[array_rand($users_in_group)]['user_id'];
@@ -229,15 +243,11 @@ function updateGroup($group_id, $creator_id, $group_name, $money_goal, $time, $p
   $stmt->execute([$creator_id, $group_name, $money_goal, $meeting_time, $meeting_place, $group_description, $group_pass, $group_id]);
 }
 
-function getUsersInGroup($group_id, $limit = null, $offset = null, $include_hidden = false, $pdo = null) {
-  $pdo = $pdo ?? getPDO();
-  
+function _getUsersInGroupQuery(&$params, $group_id, $include_hidden) {
   // Inner Table: 'Users In Group' Union 'Users Hidden From Group'
   // Outer Table: adds username and email to result from Inner Table
   // user_status: 0 = group admin / 1 = user in group / 2 = group hidden from user
-  $params = [$group_id];
-
-  $query = 'SELECT u.username, u.email, gr.user_id, gr.user_status
+  $query = '
             FROM users u
             JOIN (SELECT g.group_id, ug.user_id, IF(g.creator_id = ug.user_id, 0, 1) AS user_status
                 FROM event_groups g
@@ -257,6 +267,16 @@ function getUsersInGroup($group_id, $limit = null, $offset = null, $include_hidd
   $query .= ') AS gr ON gr.user_id = u.id
             ORDER BY gr.user_status';
 
+  return $query;
+}
+
+function getUsersInGroup($group_id, $include_hidden, $limit = null, $offset = null, $pdo = null) {
+  $pdo = $pdo ?? getPDO();
+  
+  $params = [$group_id];
+  $query = 'SELECT u.username, u.email, gr.user_id, gr.user_status'
+            ._getUsersInGroupQuery($params, $group_id, $include_hidden);
+
   if (isset($limit) && isset($offset)) {
     $query .= '
     LIMIT ? OFFSET ?';
@@ -270,24 +290,31 @@ function getUsersInGroup($group_id, $limit = null, $offset = null, $include_hidd
   return $stmt->fetchAll();
 }
 
-function getUsersInGroupCount($group_id) {
+function getUsersInGroupCount($group_id, $include_hidden) {
   $pdo = getPDO();
 
-  // trimmed down version of getUsersInGroup() query
-  $stmt = $pdo->prepare('SELECT COUNT(1)
-                        FROM users u
-                        JOIN (SELECT ug.user_id
-                            FROM event_groups g
-                                JOIN user_in_group ug ON ug.group_id = g.group_id
-                            WHERE g.group_id = ?
-                            UNION
-                            SELECT uhg.user_id
-                            FROM event_groups g
-                                JOIN user_hidden_group uhg ON uhg.group_id = g.group_id
-                            WHERE g.group_id = ?) AS gr ON gr.user_id = u.id');
-  $stmt->execute([$group_id, $group_id]);
+  $params = [$group_id];
+  $query = 'SELECT COUNT(1)'
+            ._getUsersInGroupQuery($params, $group_id, $include_hidden);
+
+  $stmt = $pdo->prepare($query);
+  $stmt->execute($params);
 
   return $stmt->fetch()['COUNT(1)'];
+}
+
+function _getUsersNotInGroupQuery() {
+  return "
+          FROM users u
+          LEFT JOIN (SELECT *
+                    FROM user_in_group
+                    UNION
+                    SELECT *
+                    FROM user_hidden_group) as gr ON u.id = gr.user_id AND gr.group_id = ?
+          LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
+          LEFT JOIN user_hidden_event uhe ON uhe.user_id = u.id AND uhe.event_id = ?
+          WHERE u.username LIKE CONCAT('%', ?, '%') AND gr.group_id IS NULL AND uhe.user_id IS NULL AND u.birthday_event != ?
+          ";
 }
 
 function getUsersNotInGroup($event_id, $group_id, $viewer, $query, $limit, $offset) {
@@ -296,38 +323,22 @@ function getUsersNotInGroup($event_id, $group_id, $viewer, $query, $limit, $offs
   // select users not in group and users group is not hidden from
   // exclude users that cannot see event, which group is attached to
   $stmt = $pdo->prepare("SELECT u.id,
-                                       u.username,
-                                       u.email,
-                                       fu.favorite_user_id IS NOT NULL as favorite
-                        FROM users u
-                            LEFT JOIN (SELECT *
-                                      FROM user_in_group
-                                      UNION
-                                      SELECT *
-                                      FROM user_hidden_group) as gr ON u.id = gr.user_id AND gr.group_id = ?
-                            LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
-                            LEFT JOIN user_hidden_event uhe ON uhe.user_id = u.id
-                        WHERE u.username LIKE CONCAT('%', ?, '%') AND gr.group_id IS NULL AND uhe.user_id IS NULL AND u.birthday_event != ?
-                        ORDER BY fu.favorite_user_id DESC, username
+                                u.username,
+                                u.email,
+                                fu.favorite_user_id IS NOT NULL as favorite"
+                        ._getUsersNotInGroupQuery().
+                        "ORDER BY fu.favorite_user_id DESC, username
                         LIMIT ? OFFSET ?");
-  $stmt->execute([$group_id, $viewer, $query, $event_id, $limit, $offset]);
+  $stmt->execute([$group_id, $event_id, $viewer, $query, $event_id, $limit, $offset]);
 
   return $stmt->fetchAll();
 }
 
-function getUsersNotInGroupCount($group_id, $viewer, $query) {
+function getUsersNotInGroupCount($event_id, $group_id, $viewer, $query) {
   $pdo = getPDO();
 
-  $stmt = $pdo->prepare("SELECT COUNT(1)
-                        FROM users u
-                            LEFT JOIN (SELECT *
-                                      FROM user_in_group
-                                      UNION
-                                      SELECT *
-                                      FROM user_hidden_group) as gr ON u.id = gr.user_id AND gr.group_id = ?
-                            LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
-                        WHERE u.username LIKE CONCAT('%', ?, '%') AND gr.group_id IS NULL");
-  $stmt->execute([$group_id, $viewer, $query]);
+  $stmt = $pdo->prepare("SELECT COUNT(1) "._getUsersNotInGroupQuery());
+  $stmt->execute([$group_id, $event_id, $viewer, $query, $event_id]);
 
   return $stmt->fetch()['COUNT(1)'];
 }

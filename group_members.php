@@ -39,11 +39,11 @@ include 'templates/data_table.php';
   data_table(
     function ($limit, $offset) {
       global $group_id;
-      return getUsersInGroup($group_id, $limit, $offset, true);
+      return getUsersInGroup($group_id, true, $limit, $offset);
     },
     function () {
       global $group_id;
-      return getUsersInGroupCount($group_id);
+      return getUsersInGroupCount($group_id, true);
     },
     10,
     [

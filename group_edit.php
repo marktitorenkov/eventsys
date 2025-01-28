@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $_POST['meeting-place'],
       $_POST['group-description'],
       $group['group_pass'],
-      $_POST['is-private']
+      $_POST['is-private'] ?? false
     );
 
     header('Location: group_view.php?group_id='.$group_id);
@@ -169,11 +169,11 @@ include 'templates/data_table.php';
   data_table(
     function ($limit, $offset) {
       global $group_id;
-      return getUsersInGroup($group_id, $limit, $offset, true);
+      return getUsersInGroup($group_id, true, $limit, $offset);
     },
     function () {
       global $group_id;
-      return getUsersInGroupCount($group_id);
+      return getUsersInGroupCount($group_id, true);
     },
     10,
     [
@@ -234,8 +234,8 @@ include 'templates/data_table.php';
       return getUsersNotInGroup($event_id, $group_id, $user['id'], $query, $limit, $offset);
     },
     function () {
-      global $user, $group_id, $query;
-      return getUsersNotInGroupCount($group_id, $user['id'], $query);
+      global $user, $query, $event_id, $group_id;
+      return getUsersNotInGroupCount($event_id, $group_id, $user['id'], $query);
     },
     10,
     [

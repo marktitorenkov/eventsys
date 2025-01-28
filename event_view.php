@@ -133,6 +133,9 @@ include 'templates/main_header.php';
           <p><a href="group_view.php?group_id=<?php echo $group['group_id'] ?>">View</a></p>
         </div>
         <div class="two-items between">
+          <span>Created by <a href="user.php?id=<?php echo $event['creator_id'] ?>"><?php echo $event['creator_username'] ?></a><span>
+        </div>
+        <div class="two-items between">
           <p>Money goal: <?php echo $group['money_goal'] ?></p>
         </div>
         <div class="two-items between">
@@ -153,7 +156,7 @@ include 'templates/main_header.php';
     <p>No groups created. Be the first!</p>
     <?php endif; ?>
   <?php else: ?>
-    <p>Your birthday is a surprise! <span style="font-weight: bold;"><?php echo count($groups) ?></span> group/s are hidden from you.</p>
+    <p>Your birthday is a surprise! <span style="font-weight: bold;"><?php echo count($groups) ?></span> group(s) are hidden from you.</p>
   <?php endif; ?>
 </section>
 
