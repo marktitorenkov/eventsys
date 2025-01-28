@@ -111,7 +111,9 @@ include 'templates/main_header.php';
     <a class="btn" href="group_create.php?event_id=<?php echo $event_id?>&year=<?php echo $year ?>">Create Group</a>
   </header>
 
-  <?php if (!empty($groups)): ?>
+  <!-- Show groups to user, if event isn't users birthday -->
+  <?php if ($user['birthday_event'] != $event_id): ?>
+    <?php if (!empty($groups)): ?>
     <ul class="group-list">
     <?php
     foreach ($groups as $group):
@@ -145,8 +147,11 @@ include 'templates/main_header.php';
       </li>
     <?php endforeach ?>
     </ul>
-  <?php else: ?>
+    <?php else: ?>
     <p>No groups created. Be the first!</p>
+    <?php endif; ?>
+  <?php else: ?>
+    <p>Your birthday is a surprise! <span style="font-weight: bold;"><?php echo count($groups) ?></span> group/s are hidden from you.</p>
   <?php endif; ?>
 </section>
 
