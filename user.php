@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $events = getEventsByOwner($user['id'], $profile['id']);
-$groups = getGroupsByOwner($user['id'], $profile['id']);
+$groups = getJoinedGroups($user['id'], $profile['id']);
 ?>
 
 <?php
@@ -42,7 +42,7 @@ include 'templates/main_header.php';
     <p><strong>Birthday:</strong> <?php echo $profile['birthdate'] ?></p>
     <hr>
 
-    <h2>Events</h2>
+    <h2>Created Events</h2>
     <ul class="user-owned">
     <?php foreach ($events as $event): ?>
       <li>
@@ -55,7 +55,7 @@ include 'templates/main_header.php';
     <?php endforeach ?>
     </ul>
 
-    <h2>Groups</h2>
+    <h2>Joined Groups</h2>
     <ul class="user-owned">
     <?php foreach ($groups as $group): ?>
       <li>
