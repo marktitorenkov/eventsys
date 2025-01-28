@@ -230,8 +230,8 @@ include 'templates/data_table.php';
   <?php
   data_table(
     function ($limit, $offset) {
-      global $user, $query, $group_id;
-      return getUsersNotInGroup($group_id, $user['id'], $query, $limit, $offset);
+      global $user, $query, $event_id, $group_id;
+      return getUsersNotInGroup($event_id, $group_id, $user['id'], $query, $limit, $offset);
     },
     function () {
       global $user, $group_id, $query;

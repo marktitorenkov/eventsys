@@ -287,7 +287,7 @@ function getUsersInGroupCount($group_id) {
   return $stmt->fetch()['COUNT(1)'];
 }
 
-function getUsersNotInGroup($group_id, $viewer, $query, $limit, $offset) {
+function getUsersNotInGroup($event_id, $group_id, $viewer, $query, $limit, $offset) {
   $pdo = getPDO();
 
   // select users not in group and users group is not hidden from
@@ -304,10 +304,10 @@ function getUsersNotInGroup($group_id, $viewer, $query, $limit, $offset) {
                                       FROM user_hidden_group) as gr ON u.id = gr.user_id AND gr.group_id = ?
                             LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
                             LEFT JOIN user_hidden_event uhe ON uhe.user_id = u.id
-                        WHERE u.username LIKE CONCAT('%', ?, '%') AND gr.group_id IS NULL AND uhe.user_id IS NULL
+                        WHERE u.username LIKE CONCAT('%', ?, '%') AND gr.group_id IS NULL AND uhe.user_id IS NULL AND u.birthday_event != ?
                         ORDER BY fu.favorite_user_id DESC, username
                         LIMIT ? OFFSET ?");
-  $stmt->execute([$group_id, $viewer, $query, $limit, $offset]);
+  $stmt->execute([$group_id, $viewer, $query, $event_id, $limit, $offset]);
 
   return $stmt->fetchAll();
 }
