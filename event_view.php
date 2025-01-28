@@ -108,7 +108,9 @@ include 'templates/main_header.php';
 
   <header class="space-betwen">
     <h2>Groups</h2>
-    <a class="btn" href="group_create.php?event_id=<?php echo $event_id?>&year=<?php echo $year ?>">Create Group</a>
+    <?php if ($user['birthday_event'] != $event_id): ?>
+      <a class="btn" href="group_create.php?event_id=<?php echo $event_id?>&year=<?php echo $year ?>">Create Group</a>
+    <?php endif; ?>
   </header>
 
   <!-- Show groups to user, if event isn't users birthday -->
