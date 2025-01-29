@@ -35,7 +35,7 @@ include 'templates/main_header.php';
 <section class="content">
   <section class="profile-container">
     <section class="profile-info">
-      <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($profile) ?>">
+      <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($profile) ?>" crossorigin="anonymous">
       <h1><?php echo $profile['username'] ?>'s profile</h1>
       <?php favorite_user_form($profile['id'], $profile['favorite'], $user['id'] !== $profile['id']) ?>
     </section>

@@ -21,7 +21,7 @@ include 'templates/main_header.php';
 <section class="content">
   <section class="profile-container">
     <section class="profile-info">
-      <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($user) ?>">
+      <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($user) ?>" crossorigin="anonymous">
       <h1><?php echo $user['username'] ?>'s profile</h1>
     </section>
     <form method="POST">
