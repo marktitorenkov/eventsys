@@ -194,7 +194,7 @@ include 'templates/data_table.php';
       },
       'User' => function ($row) { ?>
     <div class="profile-info">
-      <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($row) ?>"></img>
+      <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($row) ?>" crossorigin="anonymous"></img>
       <a href="<?php echo 'user.php?id=' . $row['user_id'] ?>"><?php echo $row['username'] ?></a>
     </div>
     <?php
@@ -249,7 +249,7 @@ include 'templates/data_table.php';
       },
       'User' => function ($row) { ?>
     <div class="profile-info">
-      <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($row) ?>"></img>
+      <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($row) ?>" crossorigin="anonymous"></img>
       <a href="<?php echo 'user.php?id=' . $row['id'] ?>"><?php echo $row['username'] ?></a>
     </div>
     <?php

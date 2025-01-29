@@ -15,7 +15,7 @@ function active($param) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="<?php echo gravatarUrl('Events System') ?>">
+  <link rel="icon" type="image/x-icon" href="<?php echo gravatarUrl('Events System') ?>" crossorigin="anonymous">
   <link rel="stylesheet" href="styles/main.css">
   <?php foreach ($page_styles as $style): ?>
     <link rel="stylesheet" href="<?php echo $style?>">
@@ -47,7 +47,7 @@ function active($param) {
           <a href="profile.php" <?php active("profile") ?>>
             <div class="profile-info">
               <strong><?php echo $user['username'] ?></strong>
-              <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($user) ?>">
+              <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($user) ?>" crossorigin="anonymous">
             </div>
           </a>
         </li>

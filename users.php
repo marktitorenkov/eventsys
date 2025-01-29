@@ -44,7 +44,7 @@ include 'templates/data_table.php'
               "User" => function($row) {
                 ?><a href="<?php echo "user.php?id=".$row['id'] ?>">
                   <div class="profile-info">
-                    <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($row) ?>"></img>
+                    <img class="profile-picture" alt="Profile Picture" src="<?php echo gravatarUrl($row) ?>" crossorigin="anonymous"></img>
                     <span><?php echo $row['username'] ?></span>
                   </div>
                 </a><?php

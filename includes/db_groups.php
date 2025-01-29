@@ -311,8 +311,8 @@ function _getUsersNotInGroupQuery() {
                     UNION
                     SELECT *
                     FROM user_hidden_group) as gr ON u.id = gr.user_id AND gr.group_id = ?
-          LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
           LEFT JOIN user_hidden_event uhe ON uhe.user_id = u.id AND uhe.event_id = ?
+          LEFT JOIN favorite_users fu ON fu.user_id = ? AND fu.favorite_user_id = u.id
           WHERE u.username LIKE CONCAT('%', ?, '%') AND gr.group_id IS NULL AND uhe.user_id IS NULL AND u.birthday_event != ?
           ";
 }
